@@ -23,16 +23,17 @@ const AuthLayout = ({ pageImage, authTitle, helpText, bottomLinks, children }: A
 					<div className="max-w-md px-4 mx-auto">
 						<div className="card overflow-hidden">
 							<div className="p-9 bg-primary">
-								<Link to="/" className="flex justify-center">
-									<img src={logo} alt="logo" className="h-6 block dark:hidden" />
+								<Link to="/" className="flex items-center gap-1 justify-center">
+									<img src={logo} alt="logo" className="h-6 block dark:hidden w-[50px] h-[50px] " />
 									<img src={logoDark} alt="logo" className="h-6 hidden dark:block" />
+									<h4 className="text-black text-[24px]">Best</h4>
 								</Link>
 							</div>
 							<div className="p-9">
 								<div className="text-center mx-auto w-3/4">
 									{pageImage && <img src={pageImage} alt="mail sent image" className="h-16 mx-auto" />}
 									<h4 className={`${pageImage ? 'mt-9' : ''} text-dark/70 text-center text-lg font-bold dark:text-light/80 mb-2`}>{authTitle}</h4>
-									<p className="text-gray-400 mb-9">{helpText}</p>
+									<p className="text-gray-400 mb-9 ">{helpText}</p>
 								</div>
 
 								{children}

@@ -22,42 +22,36 @@ const AllRoutes = (props: RouteProps) => {
 	return (
 		<React.Fragment>
 			<Routes>
-				<Route>
-					{publicProtectedFlattenRoutes.map((route, idx) => (
-						<Route
-							path={route.path}
-							element={
-								<DefaultLayout {...props} layout={Layout}>
-									{route.element}
-								</DefaultLayout>
-							}
-							key={idx}
-						/>
-					))}
-					;
-				</Route>
+				{publicProtectedFlattenRoutes.map((route, idx) => (
+					<Route
+						path={route.path}
+						element={
+							<DefaultLayout {...props} layout={Layout}>
+								{route.element}
+							</DefaultLayout>
+						}
+						key={idx}
+					/>
+				))}
 
-				<Route>
-					{authProtectedFlattenRoutes.map((route, idx) => (
-						<Route
-							path={route.path}
-							element={
-								api.isUserAuthenticated() === false ? (
-									<Navigate
-										to={{
-											pathname: '/auth/login',
-											search: 'next=' + route.path,
-										}}
-									/>
-								) : (
-									<VerticalLayout {...props}>{route.element}</VerticalLayout>
-								)
-							}
-							key={idx}
-						/>
-					))}
-					;
-				</Route>
+				{authProtectedFlattenRoutes.map((route, idx) => (
+					<Route
+						path={route.path}
+						element={
+							api.isUserAuthenticated() === false ? (
+								<Navigate
+									to={{
+										pathname: '/auth/login',
+										search: 'next=' + route.path,
+									}}
+								/>
+							) : (
+								<VerticalLayout {...props}>{route.element}</VerticalLayout>
+							)
+						}
+						key={idx}
+					/>
+				))}
 			</Routes>
 		</React.Fragment>
 	)

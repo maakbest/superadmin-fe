@@ -2,11 +2,11 @@ import jwtDecode from 'jwt-decode'
 import axios from 'axios'
 
 import config from '../../config'
+import { clearAuthSession, getAuthSession, setAuthSession } from '@/utils/storage'
 
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json'
-axios.defaults.baseURL = config.API_URL
-
+axios.defaults.baseURL = 'https://staging.best.so/api'
 // intercepting to capture errors
 axios.interceptors.response.use(
 	(response) => {
@@ -40,21 +40,18 @@ axios.interceptors.response.use(
 	}
 )
 
-const AUTH_SESSION_KEY = 'attex_user'
+export const AUTH_SESSION_KEY = 'best_user'
 
 /**
  * Sets the default authorization
  * @param {*} token
  */
+
 const setAuthorization = (token: string | null) => {
-	if (token) axios.defaults.headers.common['Authorization'] = 'JWT ' + token
+	if (token) axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 	else delete axios.defaults.headers.common['Authorization']
 }
 
-const getUserFromCookie = () => {
-	const user = sessionStorage.getItem(AUTH_SESSION_KEY)
-	return user ? (typeof user == 'object' ? user : JSON.parse(user)) : null
-}
 class APICore {
 	/**
 	 * Fetches data from given url
@@ -171,32 +168,25 @@ class APICore {
 	}
 
 	isUserAuthenticated = () => {
-		const user = this.getLoggedInUser()
-
-		if (!user) {
-			return false
-		}
-		const decoded: any = jwtDecode(user.token)
-		const currentTime = Date.now() / 1000
-		if (decoded.exp < currentTime) {
-			console.warn('access token expired')
-			return false
-		} else {
-			return true
-		}
+		const session = getAuthSession()
+		const token = session?.token
+		if (!token) return false
+		return true
 	}
 
 	setLoggedInUser = (session: any) => {
-		if (session) sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session))
-		else {
-			sessionStorage.removeItem(AUTH_SESSION_KEY)
+		if (!session) return false
+		if (session) {
+			setAuthSession(session)
 		}
 	}
 	/**
 	 * Returns the logged in user
 	 */
 	getLoggedInUser = () => {
-		return getUserFromCookie()
+		const session = getAuthSession()
+		const token = session?.token
+		return token
 	}
 
 	setUserInSession = (modifiedUser: any) => {
@@ -211,12 +201,11 @@ class APICore {
 /*
 Check if token available in session
 */
-const user = getUserFromCookie()
-if (user) {
-	const { token } = user
-	if (token) {
-		setAuthorization(token)
-	}
+
+const session = getAuthSession()
+const token = session?.token
+if (token) {
+	setAuthorization(token)
 }
 
 export { APICore, setAuthorization }

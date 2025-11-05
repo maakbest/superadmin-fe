@@ -8,6 +8,7 @@ import { logoutUser, resetAuth } from '../../redux/actions'
 import AuthContainer from '../../components/AuthPageLayout/AuthContainer'
 import { PageBreadcrumb } from '../../components'
 import { AuthLayout } from '../../components/AuthPageLayout'
+import { clearAuthSession } from '@/utils/storage'
 
 /**
  * Logout Icon
@@ -39,6 +40,7 @@ const Logout = () => {
 
 	useEffect(() => {
 		dispatch(resetAuth())
+		clearAuthSession()
 	}, [dispatch])
 
 	useEffect(() => {
