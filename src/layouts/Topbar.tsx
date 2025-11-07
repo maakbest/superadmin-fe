@@ -82,26 +82,26 @@ const notifications: NotificationItem[] = [
  * profile menu items
  */
 const profileMenus = [
-	{
-		label: 'My Account',
-		icon: 'ri-account-circle-line',
-		redirectTo: '/pages/profile',
-	},
-	{
-		label: 'Settings',
-		icon: 'ri-settings-4-line',
-		redirectTo: '/pages/profile',
-	},
-	{
-		label: 'Support',
-		icon: 'ri-customer-service-2-line',
-		redirectTo: '/pages/faq',
-	},
-	{
-		label: 'Lock Screen',
-		icon: 'ri-lock-password-line',
-		redirectTo: '/auth/lock-screen',
-	},
+	// {
+	// 	label: 'My Account',
+	// 	icon: 'ri-account-circle-line',
+	// 	redirectTo: '/pages/profile',
+	// },
+	// {
+	// 	label: 'Settings',
+	// 	icon: 'ri-settings-4-line',
+	// 	redirectTo: '/pages/profile',
+	// },
+	// {
+	// 	label: 'Support',
+	// 	icon: 'ri-customer-service-2-line',
+	// 	redirectTo: '/pages/faq',
+	// },
+	// {
+	// 	label: 'Lock Screen',
+	// 	icon: 'ri-lock-password-line',
+	// 	redirectTo: '/auth/lock-screen',
+	// },
 	{
 		label: 'Logout',
 		icon: 'ri-logout-box-line',
@@ -218,29 +218,21 @@ const Topbar = () => {
 					</span>
 				</button>
 
-				<div className="relative hidden lg:block">
-					<TopBarSearch />
-				</div>
+				<div className="relative hidden lg:block">{/* <TopBarSearch /> */}</div>
 
-				<div className="relative ms-auto">
-					<LanguageDropdown />
-				</div>
+				<div className="relative ms-auto">{/* <LanguageDropdown /> */}</div>
 
-				<div className="relative lg:flex hidden">
-					<NotificationDropdown notifications={notifications} />
-				</div>
+				<div className="relative lg:flex hidden">{/* <NotificationDropdown notifications={notifications} /> */}</div>
 
-				<div className="relative lg:flex hidden">
-					<AppsDropDown />
-				</div>
+				<div className="relative lg:flex hidden">{/* <AppsDropDown /> */}</div>
 
 				<div className="flex">
-					<button type="button" className="nav-link p-2" onClick={handleRightSideBar}>
+					{/* <button type="button" className="nav-link p-2" onClick={handleRightSideBar}>
 						<span className="sr-only">Customization</span>
 						<span className="flex items-center justify-center">
 							<i className="ri-settings-3-line text-2xl"></i>
 						</span>
-					</button>
+					</button> */}
 				</div>
 
 				<div className="lg:flex hidden">
@@ -258,7 +250,7 @@ const Topbar = () => {
 				</div>
 
 				<div className="relative">
-					<ProfileDropDown profiliePic={profilePic} menuItems={profileMenus} username="Tosha Minner" userTitle="Founder" />
+					<ProfileDropDown profiliePic={profilePic} menuItems={profileMenus} username="Best" userTitle="Super Admin" />
 				</div>
 			</header>
 		</React.Fragment>

@@ -1,0 +1,1 @@
+import{r as e}from"./index-f6f8d119.js";function r(a=!1){const[s,t]=e.useState(a),o=e.useCallback(()=>t(!0),[]),l=e.useCallback(()=>t(!1),[]),c=e.useCallback(()=>t(!s),[s]);return[s,c,o,l]}export{r as u};

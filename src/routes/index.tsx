@@ -6,6 +6,10 @@ import PrivateRoute from './PrivateRoute'
 
 // lazy load all the views
 
+// SUPER ADMIN SCREENS
+const Rewards = React.lazy(() => import('../pages/rewards/Rewards'))
+const Users = React.lazy(() => import('../pages/users/Users'))
+
 // auth
 const Login = React.lazy(() => import('../pages/auth/Login'))
 const Register = React.lazy(() => import('../pages/auth/Register'))
@@ -145,9 +149,15 @@ const dashboardRoutes: RoutesProps = {
 	header: 'Navigation',
 	children: [
 		{
-			path: '/',
-			name: 'Root',
-			element: <Navigate to="/ecommerce" />,
+			path: '/dashboard',
+			name: 'Users',
+			element: <Users />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/rewards',
+			name: 'Rewards',
+			element: <Rewards />,
 			route: PrivateRoute,
 		},
 		{
@@ -820,6 +830,28 @@ const otherPublicRoutes = [
 	},
 ]
 
+// SUPER ADMIN APP
+const userRouter: RoutesProps = {
+	path: '/',
+	name: 'Users',
+	route: PrivateRoute,
+	roles: ['Admin'],
+	icon: 'calendar',
+	element: <Users />,
+	header: 'Apps',
+}
+
+const rewardsRouter: RoutesProps = {
+	path: '/rewards',
+	name: 'Rewards',
+	route: PrivateRoute,
+	roles: ['Admin'],
+	icon: 'calendar',
+	element: <Rewards />,
+	header: 'Apps',
+}
+const adminRouters = [userRouter, rewardsRouter]
+
 // flatten the list of all nested routes
 const flattenRoutes = (routes: RoutesProps[]) => {
 	let flatRoutes: RoutesProps[] = []
@@ -835,7 +867,7 @@ const flattenRoutes = (routes: RoutesProps[]) => {
 }
 
 // All routes
-const authProtectedRoutes = [dashboardRoutes, ...appRoutes, customPagesRoutes, uiRoutes]
+const authProtectedRoutes = [dashboardRoutes, ...appRoutes, customPagesRoutes, uiRoutes, ...adminRouters]
 const publicRoutes = [...authRoutes, ...otherPublicRoutes]
 
 const authProtectedFlattenRoutes = flattenRoutes([...authProtectedRoutes])

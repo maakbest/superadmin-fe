@@ -16,14 +16,15 @@ interface ProfileDropDownProps {
 
 const ProfileDropDown = (props: ProfileDropDownProps) => {
 	const profilePic = props.profiliePic
+	const { username, userTitle } = props
 
 	const PopoverToggler = () => {
 		return (
 			<>
 				<img src={profilePic} alt="user-image" className="rounded-full h-8" />
 				<span className="md:flex flex-col gap-0.5 text-start hidden">
-					<h5 className="text-sm">Tosha Minner</h5>
-					<span className="text-xs">Founder</span>
+					<h5 className="text-sm">{username}</h5>
+					<span className="text-xs">{userTitle}</span>
 				</span>
 			</>
 		)

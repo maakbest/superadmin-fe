@@ -17,7 +17,7 @@ export function configureFakeBackend() {
 	const users: UserData[] = [
 		{
 			id: 1,
-			username: 'attex@coderthemes.com',
+			username: 'attex@codeemes.com',
 			password: 'attex',
 			firstName: 'attex',
 			lastName: 'coderthemes',

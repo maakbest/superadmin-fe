@@ -11,7 +11,6 @@ import { APICore } from '../helpers/api/apiCore'
 
 const PrivateRoute = ({ component: Component, roles, ...rest }: any) => {
 	const api = new APICore()
-
 	return (
 		<Route
 			{...rest}
