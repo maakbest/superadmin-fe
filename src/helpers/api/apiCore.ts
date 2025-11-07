@@ -6,7 +6,7 @@ import { clearAuthSession, getAuthSession, setAuthSession } from '@/utils/storag
 
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json'
-axios.defaults.baseURL = 'https://staging.best.so/api'
+axios.defaults.baseURL = config.API_URL
 // intercepting to capture errors
 axios.interceptors.response.use(
 	(response) => {
@@ -107,7 +107,11 @@ class APICore {
 	 * post given data to url
 	 */
 	create = (url: string, data: any) => {
-		return axios.post(url, data)
+		if (data && Object.keys(data).length > 0) {
+			return axios.post(url, data)
+		} else {
+			return axios.post(url)
+		}
 	}
 
 	/**

@@ -1692,10 +1692,10 @@ gridjs-react@^6.0.1:
   resolved "https://registry.npmjs.org/gridjs-react/-/gridjs-react-6.0.1.tgz"
   integrity sha512-Cb9tti25vlQH7qn1J61NMzu+1sRYxGCbTdlj+/iJmhWTe+8C0VI6snr6Gi2LKDsvcUhlBSb56T6IZQ8UF3D6aQ==
 
-gridjs@^6.0.1, gridjs@^6.0.6:
-  version "6.0.6"
-  resolved "https://registry.npmjs.org/gridjs/-/gridjs-6.0.6.tgz"
-  integrity sha512-TZ20nY+weE/wlyXOd3A9FJyJlsJ/MrHr6frMgUHFN29RmWZCYtnyfF0zuspXC81oePwSJeSZ8HY651aeyX8+rQ==
+gridjs@^6.0.1, gridjs@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/gridjs/-/gridjs-6.2.0.tgz"
+  integrity sha512-EAGGfHjyEXWh12Txs6DjTGnWTo226wbowtMrLI+yNZQaJpvs0m7yDcyM7r+D4RA7rZQVj/cfmwEaRz/rlxg8LA==
   dependencies:
     preact "^10.11.3"
 

@@ -4,6 +4,8 @@ import createSagaMiddleware from 'redux-saga'
 // reducers
 import Layout from './layout/reducers'
 import Auth from './auth/reducers'
+import Users from './users/reducers'
+import Rewards from './rewards/reducers'
 
 // saga
 import rootSaga from './sagas'
@@ -17,6 +19,8 @@ export const store = configureStore({
 	reducer: {
 		Auth: Auth,
 		Layout: Layout,
+		Users: Users,
+		Rewards: Rewards,
 	} as any,
 
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
