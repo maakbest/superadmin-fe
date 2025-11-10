@@ -118,6 +118,7 @@ const Rewards = () => {
 						},
 						{
 							name: 'Actions',
+							//@ts-ignore
 							formatter: (cell: any, row: any) => {
 								const rewardId = row?.cells?.[0]?.data?.id || ''
 
