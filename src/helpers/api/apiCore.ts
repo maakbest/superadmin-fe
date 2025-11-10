@@ -1,8 +1,7 @@
-import jwtDecode from 'jwt-decode'
 import axios from 'axios'
 
 import config from '../../config'
-import { clearAuthSession, getAuthSession, setAuthSession } from '@/utils/storage'
+import { getAuthSession, setAuthSession } from '@/utils/storage'
 
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -40,7 +39,7 @@ axios.interceptors.response.use(
 	}
 )
 
-export const AUTH_SESSION_KEY = 'best_user'
+export const AUTH_SESSION_KEY = 'best_super_admin'
 
 /**
  * Sets the default authorization
