@@ -6,5 +6,6 @@ import useTaskList from './useTaskList'
 import useModal from './useModal'
 import useRangeSlider from './useRangeSlider'
 import useOutsideClick from './useClickOutside'
+import { usePermission } from './usePermission'
 
-export { useQuery, useViewPort, useToggle, useTask, useTaskList, useModal, useRangeSlider, useOutsideClick }
+export { useQuery, useViewPort, useToggle, useTask, useTaskList, useModal, useRangeSlider, useOutsideClick, usePermission }

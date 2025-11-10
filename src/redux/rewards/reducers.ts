@@ -6,15 +6,17 @@ import { RewardsActionTypes } from './constants'
 
 const api = new APICore()
 
-const INIT_STATE = {
+const INIT_STATE: State = {
 	allRewards: [],
 	loading: false,
+	request_status: 'DEFAULT',
 }
 
 interface State {
 	allRewards?: any
 	loading?: boolean
 	value?: boolean
+	request_status: 'DEFAULT' | 'APPROVED' | 'REJECTED'
 }
 
 const Auth = (state: State = INIT_STATE, action: any): any => {
@@ -27,6 +29,18 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 						...state,
 						allRewards: data.data,
 						loading: false,
+					}
+				}
+				case RewardsActionTypes.REQUEST_APPROVED: {
+					return {
+						...state,
+						request_status: 'APPROVED',
+					}
+				}
+				case RewardsActionTypes.REQUEST_REJECTED: {
+					return {
+						...state,
+						request_status: 'APPROVED',
 					}
 				}
 				default:
@@ -43,6 +57,21 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 					}
 				}
 
+				case RewardsActionTypes.REQUEST_APPROVED: {
+					return {
+						...state,
+						request_status: 'REJECTED',
+						error: action.payload.error,
+					}
+				}
+
+				case RewardsActionTypes.REQUEST_REJECTED: {
+					return {
+						...state,
+						request_status: 'REJECTED',
+						error: action.payload.error,
+					}
+				}
 				default:
 					return { ...state }
 			}

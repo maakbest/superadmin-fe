@@ -842,8 +842,8 @@ const userRouter: RoutesProps = {
 }
 
 const rewardsRouter: RoutesProps = {
-	path: '/rewards',
-	name: 'Rewards',
+	path: '/payout-requests',
+	name: 'Payout Requests',
 	route: PrivateRoute,
 	roles: ['Admin'],
 	icon: 'calendar',

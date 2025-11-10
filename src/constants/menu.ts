@@ -732,10 +732,10 @@ const MENU_ITEMS: MenuItemTypes[] = [
 	},
 	{
 		key: 'apps-calendar',
-		label: 'Rewards',
+		label: 'Payout Requests',
 		isTitle: false,
 		icon: 'ri-gift-line',
-		url: '/rewards',
+		url: '/payout-requests',
 	},
 ]
 export { MENU_ITEMS }

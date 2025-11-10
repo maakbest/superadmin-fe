@@ -4,8 +4,10 @@ import { html } from 'gridjs'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { RewardsActionTypes } from '@/redux/rewards/constants'
+import { usePermission } from '@/hooks'
+import DismissibleAlert from '../ui/DismissibleAlert'
+import { rewardsApiResponseError } from '@/redux/actions'
 
-// ✅ Status constants
 const STATUS = {
 	PENDING: 'pending',
 	ACTIVE: 'active',
@@ -15,7 +17,6 @@ const STATUS = {
 	PENDING_APPROVAL: 'pending_approval',
 }
 
-// ✅ Color map for each status
 const statusColorMap: Record<string, string> = {
 	[STATUS.PENDING]: 'bg-yellow-500 text-white',
 	[STATUS.ACTIVE]: 'bg-green-500 text-white',
@@ -27,78 +28,126 @@ const statusColorMap: Record<string, string> = {
 
 const Rewards = () => {
 	const dispatch = useDispatch()
-	const { allRewards, loading, error } = useSelector((state: any) => state.Rewards)
+	const { allRewards, error } = useSelector((state: any) => state.Rewards)
+
+	const canApprove = usePermission('transfer-request:approve')
+	const canReject = usePermission('transfer-request:reject')
 
 	useEffect(() => {
 		dispatch({ type: RewardsActionTypes.GET_REWARDS })
 	}, [dispatch])
 
-	// Prepare safe data
+	const handleAction = (id: string, action: 'approve' | 'reject') => {
+		if (action === 'approve') {
+			dispatch({ type: RewardsActionTypes.REQUEST_APPROVED, payload: id })
+		} else {
+			dispatch({ type: RewardsActionTypes.REQUEST_REJECTED, payload: id })
+		}
+	}
+
+	// ✅ Register global functions for GridJS
+	useEffect(() => {
+		;(window as any).handleApprove = (id: string) => handleAction(id, 'approve')
+		;(window as any).handleReject = (id: string) => handleAction(id, 'reject')
+	}, [handleAction])
+
 	const tableData =
 		allRewards?.map((reward: any) => {
 			const date = reward.meta.details ? (reward.meta.details.transaction_category === 'hotel' ? `${moment(reward.meta.details.start_date).format('DD MMM YYYY')} - ${moment(reward.meta.details.end_date).format('DD MMM YYYY')}` : moment(reward.meta.details.date_of_action).format('DD MMM YYYY')) : ''
-			return [{ booking_code: reward.booking_code, name: reward.meta.details.name, date: date }, `$${reward.amount ? reward.amount / 100 : 0}`, reward?.coins / 100 || 0, reward.status]
+
+			return [
+				{
+					id: reward.uuid,
+					booking_code: reward.booking_code,
+					name: reward.meta.details.name,
+					date,
+				},
+				`$${reward.amount ? reward.amount / 100 : 0}`,
+				reward?.coins / 100 || 0,
+				reward.status,
+			]
 		}) || []
 
 	return (
-		<div>
-			<div className="card">
-				<div className="card-header">
-					<div className="flex justify-between items-center">
-						<h4 className="card-title">Rewards</h4>
-					</div>
-				</div>
+		<div className="card">
+			{error && <DismissibleAlert isVisible={error} variant="danger" message={error} onclose={() => dispatch(rewardsApiResponseError(RewardsActionTypes.REQUEST_APPROVED, ''))} />}
+			<div className="card-header">
+				<h4 className="card-title text-lg font-semibold">Rewards</h4>
+			</div>
 
-				<div className="p-6">
-					<p className="text-sm text-slate-700 dark:text-slate-400 mb-4">List of registered rewards and their details.</p>
+			<div className="p-6">
+				<Grid
+					search={true}
+					sort={true}
+					resizable={true}
+					data={tableData}
+					columns={[
+						{
+							name: 'Booking',
+							formatter: (cell: any) => {
+								const bookingCode = cell?.booking_code || ''
+								const name = cell?.name || ''
+								const date = cell?.date || ''
 
-					<Grid
-						search={true}
-						sort={true}
-						data={tableData}
-						columns={[
-							{
-								name: 'Booking',
-								formatter: (cell: any) => {
-									const bookingCode = cell?.booking_code || '' // Adjust index based on your column order
-									const name = cell?.name || ''
-									const date = cell?.date || ''
-
-									return html(`
-											<div class="flex flex-col">
-												<span class="text-sm font-semibold text-slate-800">${name}</span>
-												<span class="text-xs text-slate-500">${bookingCode}</span>
-												<span class="text-xs text-slate-400">${date}</span>
-											</div>
-										`)
-								},
+								return html(`
+                  <div class="flex flex-col">
+                    <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">${name}</span>
+                    <span class="text-xs text-slate-500">${bookingCode}</span>
+                    <span class="text-xs text-slate-400">${date}</span>
+                  </div>
+                `)
 							},
-							'Spends',
-							'Coins',
-							{
-								name: 'Status',
-								formatter: (cell: string) => {
-									const formatted =
-										cell
-											?.split('_')
-											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-											.join(' ') || 'Unknown'
-
-									const colorClass = statusColorMap[cell] || 'bg-gray-400 text-white'
-
-									return html(
-										`<span class="px-3 py-1 rounded-full text-xs font-medium ${colorClass}">
-											${formatted}
-										</span>`
-									)
-								},
+						},
+						'Spends',
+						'Coins',
+						{
+							name: 'Status',
+							formatter: (cell: string) => {
+								const formatted =
+									cell
+										?.split('_')
+										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+										.join(' ') || 'Unknown'
+								const colorClass = statusColorMap[cell] || 'bg-gray-400 text-white'
+								return html(
+									`<span class="px-3 py-1 rounded-full text-xs font-medium ${colorClass}">
+                    ${formatted}
+                  </span>`
+								)
 							},
-						]}
-						height="100%"
-						fixedHeader={true}
-						pagination={{ enabled: true, limit: 10 }}
-					/>
-				</div>
+						},
+						{
+							name: 'Actions',
+							formatter: (cell: any, row: any) => {
+								const rewardId = row?.cells?.[0]?.data?.id || ''
+
+								// ✅ Conditional rendering for permissions
+								const approveBtn = canApprove
+									? `<button onClick="window.handleApprove('${rewardId}')"
+                      class="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-full transition">
+                      <i class='ri-check-line text-sm'></i> Approve
+                    </button>`
+									: ''
+
+								const rejectBtn = canReject
+									? `<button onClick="window.handleReject('${rewardId}')"
+                      class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-3 py-1.5 rounded-full transition">
+                      <i class='ri-close-line text-sm'></i> Reject
+                    </button>`
+									: ''
+
+								return html(`
+                  <div class="flex items-center gap-2">
+                    ${approveBtn}
+                    ${rejectBtn}
+                  </div>
+                `)
+							},
+						},
+					]}
+					pagination={{ enabled: true, limit: 10 }}
+					fixedHeader={true}
+				/>
 			</div>
 		</div>
 	)

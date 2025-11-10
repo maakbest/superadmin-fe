@@ -46,9 +46,11 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 		case AuthActionTypes.API_RESPONSE_SUCCESS:
 			switch (action.payload.actionType) {
 				case AuthActionTypes.LOGIN_USER: {
+					// console.log('action.payload.data', action.payload.data.data.roles[0].permissions)
 					return {
 						...state,
 						user: action.payload.data,
+						permissions: action.payload.data.data.roles[0].permissions,
 						userLoggedIn: true,
 						loading: false,
 					}
