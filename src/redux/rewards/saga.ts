@@ -10,12 +10,12 @@ const api = new APICore()
 /**
  * Get All Rewards Saga
  */
-function* getAllRewards(): SagaIterator {
+function* getAllRewards(params: any): SagaIterator {
 	try {
 		// ✅ Dispatch loading before API call
 		yield put(rewardsApiResponseLoading(RewardsActionTypes.API_RESPONSE_LOADING))
 
-		const response = yield call(getRewardsApi)
+		const response = yield call(getRewardsApi, params.payload)
 		const rewards = response.data
 		yield put(rewardsApiResponseSuccess(RewardsActionTypes.GET_REWARDS, rewards))
 	} catch (error: any) {

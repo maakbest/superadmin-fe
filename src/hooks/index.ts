@@ -7,5 +7,6 @@ import useModal from './useModal'
 import useRangeSlider from './useRangeSlider'
 import useOutsideClick from './useClickOutside'
 import { usePermission } from './usePermission'
+import { useDebounce } from './useDebounce'
 
-export { useQuery, useViewPort, useToggle, useTask, useTaskList, useModal, useRangeSlider, useOutsideClick, usePermission }
+export { useQuery, useViewPort, useToggle, useTask, useTaskList, useModal, useRangeSlider, useOutsideClick, usePermission, useDebounce }

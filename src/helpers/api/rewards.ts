@@ -4,9 +4,9 @@ import { APICore } from './apiCore'
 
 const api = new APICore()
 
-function getrewards() {
+function getrewards(params: any) {
 	const baseUrl = '/dashboard/withdrawals/pending/'
-	return api.get(`${baseUrl}`, {})
+	return api.get(`${baseUrl}`, { ...params })
 }
 
 function approveRequest(id: string) {

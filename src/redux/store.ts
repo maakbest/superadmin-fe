@@ -6,6 +6,7 @@ import Layout from './layout/reducers'
 import Auth from './auth/reducers'
 import Users from './users/reducers'
 import Rewards from './rewards/reducers'
+import Countries from './countries/reducers'
 
 // saga
 import rootSaga from './sagas'
@@ -21,6 +22,7 @@ export const store = configureStore({
 		Layout: Layout,
 		Users: Users,
 		Rewards: Rewards,
+		Countries: Countries,
 	} as any,
 
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid } from 'gridjs-react'
 import { html } from 'gridjs'
 import moment from 'moment'
@@ -28,14 +28,13 @@ const statusColorMap: Record<string, string> = {
 
 const Rewards = () => {
 	const dispatch = useDispatch()
-	const { allRewards, error, loading } = useSelector((state: any) => state.Rewards)
+	const { allRewards, error, loading, meta } = useSelector((state: any) => state.Rewards)
 
 	const canApprove = usePermission('transfer-request:approve')
 	const canReject = usePermission('transfer-request:reject')
 
-	useEffect(() => {
-		dispatch({ type: RewardsActionTypes.GET_REWARDS })
-	}, [dispatch])
+	const [page, setPage] = useState(1)
+	const [limit, setLimit] = useState(20)
 
 	const handleAction = (id: string, action: 'approve' | 'reject') => {
 		if (action === 'approve') {
@@ -44,6 +43,16 @@ const Rewards = () => {
 			dispatch({ type: RewardsActionTypes.REQUEST_REJECTED, payload: id })
 		}
 	}
+
+	// 🔹 Fetch users when filters/page change
+	const fetchUsers = (p = 1) => {
+		const params: Record<string, any> = { page: p, per_page: limit }
+		dispatch({ type: RewardsActionTypes.GET_REWARDS, payload: params })
+	}
+
+	useEffect(() => {
+		fetchUsers(page)
+	}, [page, limit, dispatch])
 
 	// ✅ Register global functions for GridJS
 	useEffect(() => {
@@ -56,7 +65,7 @@ const Rewards = () => {
 			const date = reward.meta.details ? (reward.meta.details.transaction_category === 'hotel' ? `${moment(reward.meta.details.start_date).format('DD MMM YYYY')} - ${moment(reward.meta.details.end_date).format('DD MMM YYYY')}` : moment(reward.meta.details.date_of_action).format('DD MMM YYYY')) : ''
 
 			return [
-				'',
+				'John Deo',
 				{
 					id: reward.uuid,
 					booking_code: reward.booking_code,
@@ -69,6 +78,12 @@ const Rewards = () => {
 				reward.uuid,
 			]
 		}) || []
+
+	// 🔹 Pagination Logic
+	const totalPages = Math.ceil((meta?.total || 0) / limit)
+	const goToPage = (newPage: number) => {
+		if (newPage >= 1 && newPage <= totalPages) setPage(newPage)
+	}
 
 	return (
 		<div className="card">
@@ -83,86 +98,148 @@ const Rewards = () => {
 			</div>
 
 			<div className="p-6">
-				<Grid
-					search={true}
-					sort={true}
-					resizable={true}
-					data={tableData}
-					style={{
-						th: {
-							backgroundColor: 'rgba(0, 0, 0, 0.05)',
-							fontWeight: '600',
-						},
-					}}
-					columns={[
-						'User Details',
-						{
-							name: 'Booking',
-							formatter: (cell: any) => {
-								const bookingCode = cell?.booking_code || ''
-								const name = cell?.name || ''
-								const date = cell?.date || ''
+				{tableData.length > 0 ? (
+					<Grid
+						search={true}
+						sort={true}
+						resizable={true}
+						data={tableData}
+						style={{
+							th: {
+								backgroundColor: 'rgba(0, 0, 0, 0.05)',
+								fontWeight: '600',
+							},
+						}}
+						columns={[
+							'User Name',
+							{
+								name: 'Booking',
+								formatter: (cell: any) => {
+									const bookingCode = cell?.booking_code || ''
+									const name = cell?.name || ''
+									const date = cell?.date || ''
 
-								return html(`
+									return html(`
                   <div class="flex flex-col">
                     <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">${name}</span>
                     <span class="text-xs text-slate-500">${bookingCode}</span>
                     <span class="text-xs text-slate-400">${date}</span>
                   </div>
                 `)
+								},
 							},
-						},
-						'Spends',
-						'Coins',
-						{
-							name: 'Status',
-							formatter: (cell: string) => {
-								const formatted =
-									cell
-										?.split('_')
-										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-										.join(' ') || 'Unknown'
-								const colorClass = statusColorMap[cell] || 'bg-gray-400 text-white'
-								return html(
-									`<span class="px-3 py-1 rounded-full text-xs font-medium ${colorClass}">
+							'Spends',
+							'Coins',
+							{
+								name: 'Status',
+								formatter: (cell: string) => {
+									const formatted =
+										cell
+											?.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ') || 'Unknown'
+									const colorClass = statusColorMap[cell] || 'bg-gray-400 text-white'
+									return html(
+										`<span class="px-3 py-1 rounded-full text-xs font-medium ${colorClass}">
                     ${formatted}
                   </span>`
-								)
+									)
+								},
 							},
-						},
-						{
-							name: 'Actions',
-							//@ts-ignore
-							formatter: (cell: any, row: any) => {
-								const rewardId = cell || ''
+							{
+								name: 'Actions',
+								//@ts-ignore
+								formatter: (cell: any, row: any) => {
+									const rewardId = cell || ''
 
-								// ✅ Conditional rendering for permissions
-								const approveBtn = canApprove
-									? `<button onClick="window.handleApprove('${rewardId}')"
+									// ✅ Conditional rendering for permissions
+									const approveBtn = canApprove
+										? `<button onClick="window.handleApprove('${rewardId}')"
                       class="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-full transition">
                       <i class='ri-check-line text-sm'></i> Approve
                     </button>`
-									: ''
+										: ''
 
-								const rejectBtn = canReject
-									? `<button onClick="window.handleReject('${rewardId}')"
+									const rejectBtn = canReject
+										? `<button onClick="window.handleReject('${rewardId}')"
                       class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-3 py-1.5 rounded-full transition">
                       <i class='ri-close-line text-sm'></i> Reject
                     </button>`
-									: ''
+										: ''
 
-								return html(`
+									return html(`
                   <div class="flex items-center gap-2">
                     ${approveBtn}
                     ${rejectBtn}
                   </div>
                 `)
+								},
 							},
-						},
-					]}
-					pagination={{ enabled: true, limit: 10 }}
-					fixedHeader={true}
-				/>
+						]}
+						// pagination={{ enabled: true, limit: 10 }}
+						fixedHeader={true}
+					/>
+				) : (
+					<div className="border rounded-md overflow-hidden">
+						{/* ✅ Custom Empty Table with Headers */}
+						<table className="min-w-full text-sm text-left border-collapse">
+							<thead className="bg-gray-100 text-gray-700 font-semibold">
+								<tr>
+									<th className="px-4 py-2 border-b">User Name</th>
+									<th className="px-4 py-2 border-b">Booking</th>
+									<th className="px-4 py-2 border-b">Spends</th>
+									<th className="px-4 py-2 border-b">Coins</th>
+									<th className="px-4 py-2 border-b">Status</th>
+									<th className="px-4 py-2 border-b">Actipns</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td colSpan={6} className="text-center py-10 text-gray-500">
+										<div className="flex flex-col items-center justify-center">
+											{/* Optional icon or illustration */}
+											<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+												<path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+											</svg>
+											<span className="text-gray-600 font-medium">No records found</span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				)}
+				{/* 🔹 Custom Pagination */}
+				<div className="flex justify-between items-center mt-4">
+					<div className="text-sm text-gray-600">
+						Showing page {page} of {totalPages || 1}
+					</div>
+
+					<div className="flex gap-2 items-center">
+						<button onClick={() => goToPage(page - 1)} disabled={page === 1} className="px-3 py-1 border rounded disabled:opacity-50">
+							Prev
+						</button>
+
+						{[...Array(totalPages)].map((_, i) => (
+							<button key={i} onClick={() => goToPage(i + 1)} className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'}`}>
+								{i + 1}
+							</button>
+						))}
+
+						<button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className="px-3 py-1 border rounded disabled:opacity-50">
+							Next
+						</button>
+					</div>
+
+					{/* Optional rows per page selector */}
+					<select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border border-gray-300 rounded px-2 py-1 text-sm w-[100px]">
+						{[20, 50, 100].map((n) => (
+							<option key={n} value={n}>
+								{n} / page
+							</option>
+						))}
+					</select>
+				</div>
 			</div>
 		</div>
 	)

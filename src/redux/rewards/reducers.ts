@@ -10,6 +10,7 @@ const INIT_STATE: State = {
 	allRewards: [],
 	loading: false,
 	request_status: 'DEFAULT',
+	meta: {},
 }
 
 interface State {
@@ -17,6 +18,7 @@ interface State {
 	loading?: boolean
 	value?: boolean
 	request_status: 'DEFAULT' | 'APPROVED' | 'REJECTED'
+	meta: any
 }
 
 const Auth = (state: State = INIT_STATE, action: any): any => {
@@ -35,6 +37,7 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 					return {
 						...state,
 						allRewards: data.data,
+						meta: data.meta,
 						loading: false,
 					}
 				}

@@ -17,9 +17,9 @@ export const usersApiResponseError = (actionType: string, error: string): UsersA
 	payload: { actionType, error },
 })
 
-export const getUsers = (data: any) => ({
+export const getUsers = (data: any, params: any) => ({
 	type: UsersActionTypes.GET_USERS,
-	payload: { data },
+	payload: { data, params },
 })
 
 export const usersApiResponseLoading = (actionType: string) => ({

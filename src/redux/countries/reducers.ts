@@ -1,41 +1,33 @@
-// apicore
-import { APICore } from '../../helpers/api/apiCore'
-
 // constants
-import { UsersActionTypes } from './constants'
-
-const api = new APICore()
+import { CountriesActionTypes } from './constants'
 
 const INIT_STATE = {
-	allUsers: [],
+	allCountries: [],
 	loading: false,
-	meta: {},
 }
 
 interface State {
-	allUsers?: any
-	meta: any
+	allCountries?: any
 	loading?: boolean
 	value?: boolean
 }
 
 const Auth = (state: State = INIT_STATE, action: any): any => {
 	switch (action.type) {
-		case UsersActionTypes.API_RESPONSE_LOADING:
+		case CountriesActionTypes.API_RESPONSE_LOADING:
 			return {
 				...state,
 				loading: true,
 				error: null,
 			}
 
-		case UsersActionTypes.API_RESPONSE_SUCCESS:
+		case CountriesActionTypes.API_RESPONSE_SUCCESS:
 			switch (action.payload.actionType) {
-				case UsersActionTypes.GET_USERS: {
+				case CountriesActionTypes.GET_COUNTRIES: {
 					const { data } = action.payload
 					return {
 						...state,
-						allUsers: data.data,
-						meta: data.meta,
+						allCountries: data.data,
 						loading: false,
 					}
 				}
@@ -43,9 +35,9 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 					return { ...state }
 			}
 
-		case UsersActionTypes.API_RESPONSE_ERROR:
+		case CountriesActionTypes.API_RESPONSE_ERROR:
 			switch (action.payload.actionType) {
-				case UsersActionTypes.GET_USERS: {
+				case CountriesActionTypes.GET_COUNTRIES: {
 					return {
 						...state,
 						error: action.payload.error,
