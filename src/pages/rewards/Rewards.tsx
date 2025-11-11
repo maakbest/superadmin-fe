@@ -100,7 +100,6 @@ const Rewards = () => {
 			<div className="p-6">
 				{tableData.length > 0 ? (
 					<Grid
-						search={true}
 						sort={true}
 						resizable={true}
 						data={tableData}
