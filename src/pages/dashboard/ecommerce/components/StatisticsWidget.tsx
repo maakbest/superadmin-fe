@@ -5,9 +5,9 @@ interface StatisticsWidgetProps {
 	variant: string
 	cardTitle: string
 	title: string
-	change: string
+	change?: string
 	stats: string
-	dataSince: string
+	dataSince?: string
 	classname: string
 	chartSeries: number[]
 	colors: string[]
@@ -48,13 +48,17 @@ const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince,
 							{cardTitle}
 						</h5>
 						<h3 className="text-2xl my-6">{stats}</h3>
-						<p className="text-gray-400 truncate">
-							<span className={`${variant} rounded-md text-xs px-1.5 py-0.5 text-white me-1`}>
-								<i className="ri-arrow-up-line"></i> {change}
-							</span>
-							&nbsp;
-							<span>{dataSince}</span>
-						</p>
+						{(change || dataSince) && (
+							<p className="text-gray-400 truncate">
+								{change && (
+									<span className={`${variant} rounded-md text-xs px-1.5 py-0.5 text-white me-1`}>
+										<i className="ri-arrow-up-line"></i> {change}
+									</span>
+								)}
+								&nbsp;
+								<span>{dataSince}</span>
+							</p>
+						)}
 					</div>
 					<div className="shrink">
 						<ReactApexCharts className={classname} options={apexOpts} series={chartSeries} type="donut" width={95} height={95} />

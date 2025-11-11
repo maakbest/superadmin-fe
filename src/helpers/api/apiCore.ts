@@ -1,26 +1,22 @@
 import axios from 'axios'
-
 import config from '../../config'
 import { getAuthSession, setAuthSession } from '@/utils/storage'
 
-// content type
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.baseURL = config.API_URL
-// intercepting to capture errors
+
+// ✅ Interceptor to handle errors
 axios.interceptors.response.use(
-	(response) => {
-		return response
-	},
+	(response) => response,
 	(error) => {
-		// Any status codes that falls outside the range of 2xx cause this function to trigger
 		let message
 
-		if (error && error.response && error.response.status === 404) {
-			// window.location.href = '/not-found';
-		} else if (error && error.response && error.response.status === 403) {
+		if (error?.response?.status === 404) {
+			// window.location.href = '/not-found'
+		} else if (error?.response?.status === 403) {
 			window.location.href = '/access-denied'
 		} else {
-			switch (error.response.status) {
+			switch (error?.response?.status) {
 				case 401:
 					message = 'Invalid credentials'
 					break
@@ -28,187 +24,118 @@ axios.interceptors.response.use(
 					message = 'Access Forbidden'
 					break
 				case 404:
-					message = 'Sorry! the data you are looking for could not be found'
+					message = 'Data not found'
 					break
-				default: {
-					message = error.response && error.response.data ? error.response.data['message'] : error.message || error
-				}
+				default:
+					message = error.response?.data?.message || error.message || error
 			}
-			return Promise.reject(message)
 		}
+		return Promise.reject(message)
 	}
 )
 
 export const AUTH_SESSION_KEY = 'best_super_admin'
 
 /**
- * Sets the default authorization
- * @param {*} token
+ * ✅ Always set or clear Authorization header
  */
-
-const setAuthorization = (token: string | null) => {
-	if (token) axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+export const setAuthorization = (token: string | null) => {
+	if (token) axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 	else delete axios.defaults.headers.common['Authorization']
 }
 
 class APICore {
-	/**
-	 * Fetches data from given url
-	 */
-	get = (url: string, params: any) => {
-		let response
-		if (params) {
-			const queryString = params
-				? Object.keys(params)
-						.map((key) => key + '=' + params[key])
-						.join('&')
-				: ''
-			response = axios.get(`${url}?${queryString}`, params)
-		} else {
-			response = axios.get(`${url}`, params)
-		}
-		return response
+	constructor() {
+		// ✅ Automatically attach Authorization token on every request
+		axios.interceptors.request.use((config) => {
+			const session = getAuthSession()
+			const token = session?.token
+			if (token) {
+				config.headers.Authorization = `Bearer ${token}`
+			}
+			return config
+		})
 	}
 
-	getFile = (url: string, params: any) => {
-		let response
-		if (params) {
-			const queryString = params
-				? Object.keys(params)
-						.map((key) => key + '=' + params[key])
-						.join('&')
-				: ''
-			response = axios.get(`${url}?${queryString}`, { responseType: 'blob' })
-		} else {
-			response = axios.get(`${url}`, { responseType: 'blob' })
-		}
-		return response
+	get = (url: string, params?: Record<string, any>) => {
+		const queryString = params
+			? Object.entries(params)
+					.map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
+					.join('&')
+			: ''
+
+		return axios.get(queryString ? `${url}?${queryString}` : url)
 	}
 
-	getMultiple = (urls: string, params: any) => {
-		const reqs = []
-		let queryString = ''
-		if (params) {
-			queryString = params
-				? Object.keys(params)
-						.map((key) => key + '=' + params[key])
-						.join('&')
-				: ''
-		}
+	getFile = (url: string, params?: Record<string, any>) => {
+		const queryString = params
+			? Object.entries(params)
+					.map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
+					.join('&')
+			: ''
 
-		for (const url of urls) {
-			reqs.push(axios.get(`${url}?${queryString}`))
-		}
-		return axios.all(reqs)
+		return axios.get(queryString ? `${url}?${queryString}` : url, { responseType: 'blob' })
 	}
 
-	/**
-	 * post given data to url
-	 */
-	create = (url: string, data: any) => {
-		if (data && Object.keys(data).length > 0) {
-			return axios.post(url, data)
-		} else {
-			return axios.post(url)
-		}
+	getMultiple = (urls: string[], params?: Record<string, any>) => {
+		const queryString = params
+			? Object.entries(params)
+					.map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
+					.join('&')
+			: ''
+		const requests = urls.map((url) => axios.get(queryString ? `${url}?${queryString}` : url))
+		return axios.all(requests)
 	}
 
-	/**
-	 * Updates patch data
-	 */
-	updatePatch = (url: string, data: any) => {
-		return axios.patch(url, data)
-	}
+	create = (url: string, data?: any) => axios.post(url, data || {})
 
-	/**
-	 * Updates data
-	 */
-	update = (url: string, data: any) => {
-		return axios.put(url, data)
-	}
+	updatePatch = (url: string, data: any) => axios.patch(url, data)
 
-	/**
-	 * Deletes data
-	 */
-	delete = (url: string) => {
-		return axios.delete(url)
-	}
+	update = (url: string, data: any) => axios.put(url, data)
 
-	/**
-	 * post given data to url with file
-	 */
+	delete = (url: string) => axios.delete(url)
+
 	createWithFile = (url: string, data: any) => {
 		const formData = new FormData()
-		for (const k in data) {
-			formData.append(k, data[k])
-		}
-
-		const config = {
-			headers: {
-				...axios.defaults.headers,
-				'content-type': 'multipart/form-data',
-			},
-		}
-		return axios.post(url, formData, config)
+		for (const key in data) formData.append(key, data[key])
+		return axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
 	}
 
-	/**
-	 * post given data to url with file
-	 */
 	updateWithFile = (url: string, data: any) => {
 		const formData = new FormData()
-		for (const k in data) {
-			formData.append(k, data[k])
-		}
-
-		const config = {
-			headers: {
-				...axios.defaults.headers,
-				'content-type': 'multipart/form-data',
-			},
-		}
-		return axios.patch(url, formData, config)
+		for (const key in data) formData.append(key, data[key])
+		return axios.patch(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
 	}
 
 	isUserAuthenticated = () => {
-		const session = getAuthSession()
-		const token = session?.token
-		if (!token) return false
-		return true
+		const token = getAuthSession()?.token
+		return Boolean(token)
 	}
 
 	setLoggedInUser = (session: any) => {
 		if (!session) return false
 		if (session) {
 			setAuthSession(session)
+			setAuthorization(session?.token || null) // ✅ Update axios header immediately
 		}
 	}
-	/**
-	 * Returns the logged in user
-	 */
-	getLoggedInUser = () => {
-		const session = getAuthSession()
-		const token = session?.token
-		return token
-	}
+
+	getLoggedInUser = () => getAuthSession()
 
 	setUserInSession = (modifiedUser: any) => {
-		const userInfo = sessionStorage.getItem(AUTH_SESSION_KEY)
-		if (userInfo) {
-			const { token, user } = JSON.parse(userInfo)
-			this.setLoggedInUser({ token, ...user, ...modifiedUser })
+		const session = getAuthSession()
+		if (session) {
+			setAuthSession({ ...session, ...modifiedUser })
 		}
 	}
 }
 
-/*
-Check if token available in session
-*/
-
+/**
+ * ✅ Ensure token attached even on initial load
+ */
 const session = getAuthSession()
-const token = session?.token
-if (token) {
-	setAuthorization(token)
+if (session?.token) {
+	setAuthorization(session.token)
 }
 
-export { APICore, setAuthorization }
+export { APICore }

@@ -6,7 +6,7 @@ import { APICore, setAuthorization } from '../../helpers/api/apiCore'
 import { getusers as getUsersApi } from '../../helpers/api/users'
 
 // actions
-import { usersApiResponseSuccess, usersApiResponseError } from './actions'
+import { usersApiResponseSuccess, usersApiResponseError, usersApiResponseLoading } from './actions'
 
 // constants
 import { UsersActionTypes } from './constants'
@@ -17,19 +17,17 @@ const api = new APICore()
 /**
  * Get All Users Saga
  */
-function* getAllUsers(): SagaIterator {
+function* getAllUsers(params: any): SagaIterator {
 	try {
-		const response = yield call(getUsersApi)
+		// ✅ Dispatch loading before API call
+		yield put(usersApiResponseLoading(UsersActionTypes.GET_USERS))
+		const response = yield call(getUsersApi, params.payload)
 		const users = response.data
 		// Dispatch success action
 		yield put(usersApiResponseSuccess(UsersActionTypes.GET_USERS, users))
 	} catch (error: any) {
 		// Dispatch error action
 		yield put(usersApiResponseError(UsersActionTypes.GET_USERS, error))
-
-		// Reset session on failure (optional)
-		api.setLoggedInUser(null)
-		setAuthorization(null)
 	}
 }
 

@@ -2,7 +2,7 @@ import { all, fork, put, takeEvery, call } from 'redux-saga/effects'
 import { SagaIterator } from '@redux-saga/core'
 import { APICore } from '../../helpers/api/apiCore'
 import { getrewards as getRewardsApi, approveRequest as approveRequestApi, rejectRequest as rejectRequestApi } from '../../helpers/api/rewards'
-import { rewardsApiResponseSuccess, rewardsApiResponseError } from './actions'
+import { rewardsApiResponseSuccess, rewardsApiResponseError, rewardsApiResponseLoading } from './actions'
 import { RewardsActionTypes } from './constants'
 
 const api = new APICore()
@@ -10,9 +10,12 @@ const api = new APICore()
 /**
  * Get All Rewards Saga
  */
-function* getAllRewards(): SagaIterator {
+function* getAllRewards(params: any): SagaIterator {
 	try {
-		const response = yield call(getRewardsApi)
+		// ✅ Dispatch loading before API call
+		yield put(rewardsApiResponseLoading(RewardsActionTypes.API_RESPONSE_LOADING))
+
+		const response = yield call(getRewardsApi, params.payload)
 		const rewards = response.data
 		yield put(rewardsApiResponseSuccess(RewardsActionTypes.GET_REWARDS, rewards))
 	} catch (error: any) {
@@ -25,6 +28,9 @@ function* getAllRewards(): SagaIterator {
  */
 function* approveRewardRequest({ payload: id }: any): SagaIterator {
 	try {
+		// ✅ Dispatch loading before API call
+		yield put(rewardsApiResponseLoading(RewardsActionTypes.API_RESPONSE_LOADING))
+
 		yield call(approveRequestApi, id)
 		yield put(rewardsApiResponseSuccess(RewardsActionTypes.REQUEST_APPROVED, id))
 
@@ -40,6 +46,9 @@ function* approveRewardRequest({ payload: id }: any): SagaIterator {
  */
 function* rejectRewardRequest({ payload: id }: any): SagaIterator {
 	try {
+		// ✅ Dispatch loading before API call
+		yield put(rewardsApiResponseLoading(RewardsActionTypes.API_RESPONSE_LOADING))
+
 		yield call(rejectRequestApi, id)
 		yield put(rewardsApiResponseSuccess(RewardsActionTypes.REQUEST_REJECTED, id))
 

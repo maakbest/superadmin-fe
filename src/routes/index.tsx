@@ -143,13 +143,13 @@ export interface RoutesProps {
 
 // dashboards
 const dashboardRoutes: RoutesProps = {
-	path: '/dashboard',
+	path: '#',
 	name: 'Dashboards',
 	icon: 'home',
 	header: 'Navigation',
 	children: [
 		{
-			path: '/dashboard',
+			path: '#',
 			name: 'Users',
 			element: <Users />,
 			route: PrivateRoute,
@@ -850,7 +850,17 @@ const rewardsRouter: RoutesProps = {
 	element: <Rewards />,
 	header: 'Apps',
 }
-const adminRouters = [userRouter, rewardsRouter]
+
+const dashboardSA: RoutesProps = {
+	path: '/dashboard',
+	name: 'Dashboard',
+	element: <Ecommerce />,
+	route: PrivateRoute,
+	roles: ['Admin'],
+	icon: 'home',
+	header: 'Apps',
+}
+const adminRouters = [userRouter, rewardsRouter, dashboardSA]
 
 // flatten the list of all nested routes
 const flattenRoutes = (routes: RoutesProps[]) => {

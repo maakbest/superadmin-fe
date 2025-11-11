@@ -10,6 +10,7 @@ const INIT_STATE: State = {
 	allRewards: [],
 	loading: false,
 	request_status: 'DEFAULT',
+	meta: {},
 }
 
 interface State {
@@ -17,10 +18,18 @@ interface State {
 	loading?: boolean
 	value?: boolean
 	request_status: 'DEFAULT' | 'APPROVED' | 'REJECTED'
+	meta: any
 }
 
 const Auth = (state: State = INIT_STATE, action: any): any => {
 	switch (action.type) {
+		case RewardsActionTypes.API_RESPONSE_LOADING:
+			return {
+				...state,
+				loading: true,
+				error: null,
+			}
+
 		case RewardsActionTypes.API_RESPONSE_SUCCESS:
 			switch (action.payload.actionType) {
 				case RewardsActionTypes.GET_REWARDS: {
@@ -28,6 +37,7 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 					return {
 						...state,
 						allRewards: data.data,
+						meta: data.meta,
 						loading: false,
 					}
 				}

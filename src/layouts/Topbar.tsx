@@ -119,6 +119,7 @@ function subtractHours(date: Date, minutes: number) {
 
 const Topbar = () => {
 	const dispatch = useDispatch<AppDispatch>()
+	const { user } = useSelector((state: any) => state.Auth)
 	const { width } = useViewPort()
 
 	const { layoutTheme, sideBarType } = useSelector((state: RootState) => ({
@@ -206,6 +207,9 @@ const Topbar = () => {
 		dispatch(showRightSidebar())
 	}
 
+	const fullName = user?.data?.first_name + ' ' + user?.data?.last_name || 'Best'
+	const role = user?.data?.roles?.[0]?.name || 'Admin'
+
 	return (
 		<React.Fragment>
 			<header className="app-header flex items-center px-4 gap-3.5">
@@ -250,7 +254,7 @@ const Topbar = () => {
 				</div>
 
 				<div className="relative">
-					<ProfileDropDown profiliePic={profilePic} menuItems={profileMenus} username="Best" userTitle="Super Admin" />
+					<ProfileDropDown profiliePic={profilePic} menuItems={profileMenus} username={fullName} userTitle={role} />
 				</div>
 			</header>
 		</React.Fragment>

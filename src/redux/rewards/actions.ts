@@ -17,9 +17,9 @@ export const rewardsApiResponseError = (actionType: string, error: string): Rewa
 	payload: { actionType, error },
 })
 
-export const getRewards = (data: any) => ({
+export const getRewards = (data: any, params: any) => ({
 	type: RewardsActionTypes.GET_REWARDS,
-	payload: { data },
+	payload: { data, params },
 })
 
 export const requestApprovedAction = (id: string) => ({
@@ -30,4 +30,9 @@ export const requestApprovedAction = (id: string) => ({
 export const requestRejectedAction = (id: string) => ({
 	type: RewardsActionTypes.REQUEST_REJECTED,
 	payload: { id },
+})
+
+export const rewardsApiResponseLoading = (actionType: string) => ({
+	type: RewardsActionTypes.API_RESPONSE_LOADING,
+	payload: { actionType },
 })

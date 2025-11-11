@@ -1,6 +1,7 @@
 export enum RewardsActionTypes {
 	API_RESPONSE_SUCCESS = '@@rewards/API_RESPONSE_SUCCESS',
 	API_RESPONSE_ERROR = '@@rewards/API_RESPONSE_ERROR',
+	API_RESPONSE_LOADING = '@@rewards/API_RESPONSE_LOADING', // ✅ new
 
 	GET_REWARDS = '@@rewards/GET_REWARDS',
 	REQUEST_APPROVED = '@@rewards/REQUEST_APPROVED',
