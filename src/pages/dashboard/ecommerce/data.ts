@@ -1,3 +1,5 @@
+import { ApexOptions } from 'apexcharts'
+
 const products = [
 	{
 		product: 'ASOS Ridley High Waist',
@@ -43,4 +45,55 @@ const products = [
 	},
 ]
 
+// Spiline Area
+export const spilineAreaApexOpts: ApexOptions = {
+	chart: {
+		height: 380,
+		type: 'area',
+	},
+	dataLabels: {
+		enabled: false,
+	},
+	stroke: {
+		width: 3,
+		curve: 'smooth',
+	},
+	colors: ['#3e60d5', '#6c757d'],
+	series: [
+		{
+			name: 'Verified Users',
+			data: [31, 40, 28, 51, 42, 109, 100],
+		},
+		{
+			name: 'Not Verified Users',
+			data: [11, 32, 45, 32, 34, 52, 41],
+		},
+	],
+	legend: {
+		offsetY: 5,
+	},
+	xaxis: {
+		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+	},
+	tooltip: {
+		fixed: {
+			enabled: false,
+			position: 'topRight',
+		},
+	},
+	grid: {
+		row: {
+			colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+			opacity: 0.2,
+		},
+		borderColor: '#f1f3fa',
+		padding: {
+			bottom: 5,
+		},
+	},
+	// grid: {
+	//     borderColor: '#f1f3fa',
+
+	// }
+}
 export { products }

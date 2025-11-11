@@ -21,6 +21,13 @@ interface State {
 
 const Auth = (state: State = INIT_STATE, action: any): any => {
 	switch (action.type) {
+		case RewardsActionTypes.API_RESPONSE_LOADING:
+			return {
+				...state,
+				loading: true,
+				error: null,
+			}
+
 		case RewardsActionTypes.API_RESPONSE_SUCCESS:
 			switch (action.payload.actionType) {
 				case RewardsActionTypes.GET_REWARDS: {

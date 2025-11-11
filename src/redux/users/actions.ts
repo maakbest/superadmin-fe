@@ -21,3 +21,8 @@ export const getUsers = (data: any) => ({
 	type: UsersActionTypes.GET_USERS,
 	payload: { data },
 })
+
+export const usersApiResponseLoading = (actionType: string) => ({
+	type: UsersActionTypes.API_RESPONSE_LOADING,
+	payload: { actionType },
+})

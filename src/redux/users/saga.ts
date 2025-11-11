@@ -6,7 +6,7 @@ import { APICore, setAuthorization } from '../../helpers/api/apiCore'
 import { getusers as getUsersApi } from '../../helpers/api/users'
 
 // actions
-import { usersApiResponseSuccess, usersApiResponseError } from './actions'
+import { usersApiResponseSuccess, usersApiResponseError, usersApiResponseLoading } from './actions'
 
 // constants
 import { UsersActionTypes } from './constants'
@@ -19,6 +19,9 @@ const api = new APICore()
  */
 function* getAllUsers(): SagaIterator {
 	try {
+		// ✅ Dispatch loading before API call
+		yield put(usersApiResponseLoading(UsersActionTypes.GET_USERS))
+
 		const response = yield call(getUsersApi)
 		const users = response.data
 		// Dispatch success action

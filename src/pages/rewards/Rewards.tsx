@@ -28,7 +28,7 @@ const statusColorMap: Record<string, string> = {
 
 const Rewards = () => {
 	const dispatch = useDispatch()
-	const { allRewards, error } = useSelector((state: any) => state.Rewards)
+	const { allRewards, error, loading } = useSelector((state: any) => state.Rewards)
 
 	const canApprove = usePermission('transfer-request:approve')
 	const canReject = usePermission('transfer-request:reject')
@@ -56,6 +56,7 @@ const Rewards = () => {
 			const date = reward.meta.details ? (reward.meta.details.transaction_category === 'hotel' ? `${moment(reward.meta.details.start_date).format('DD MMM YYYY')} - ${moment(reward.meta.details.end_date).format('DD MMM YYYY')}` : moment(reward.meta.details.date_of_action).format('DD MMM YYYY')) : ''
 
 			return [
+				'',
 				{
 					id: reward.uuid,
 					booking_code: reward.booking_code,
@@ -65,11 +66,17 @@ const Rewards = () => {
 				`$${reward.amount ? reward.amount / 100 : 0}`,
 				reward?.coins / 100 || 0,
 				reward.status,
+				reward.uuid,
 			]
 		}) || []
 
 	return (
 		<div className="card">
+			{loading && (
+				<div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg">
+					<div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+				</div>
+			)}
 			{error && <DismissibleAlert isVisible={error} variant="danger" message={error} onclose={() => dispatch(rewardsApiResponseError(RewardsActionTypes.REQUEST_APPROVED, ''))} />}
 			<div className="card-header">
 				<h4 className="card-title text-lg font-semibold">Rewards</h4>
@@ -81,7 +88,14 @@ const Rewards = () => {
 					sort={true}
 					resizable={true}
 					data={tableData}
+					style={{
+						th: {
+							backgroundColor: 'rgba(0, 0, 0, 0.05)',
+							fontWeight: '600',
+						},
+					}}
 					columns={[
+						'User Details',
 						{
 							name: 'Booking',
 							formatter: (cell: any) => {
@@ -120,7 +134,7 @@ const Rewards = () => {
 							name: 'Actions',
 							//@ts-ignore
 							formatter: (cell: any, row: any) => {
-								const rewardId = row?.cells?.[0]?.data?.id || ''
+								const rewardId = cell || ''
 
 								// ✅ Conditional rendering for permissions
 								const approveBtn = canApprove

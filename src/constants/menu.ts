@@ -725,6 +725,13 @@ export interface MenuItemTypes {
 const MENU_ITEMS: MenuItemTypes[] = [
 	{
 		key: 'apps-calendar',
+		label: 'Dashboard',
+		isTitle: false,
+		icon: 'ri-home-line',
+		url: '/dashboard',
+	},
+	{
+		key: 'apps-calendar',
 		label: 'Users',
 		isTitle: false,
 		icon: 'ri-user-3-line',

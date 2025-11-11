@@ -24,7 +24,7 @@ const ProfileDropDown = (props: ProfileDropDownProps) => {
 				<img src={profilePic} alt="user-image" className="rounded-full h-8" />
 				<span className="md:flex flex-col gap-0.5 text-start hidden">
 					<h5 className="text-sm">{username}</h5>
-					<span className="text-xs">{userTitle}</span>
+					<span className="text-xs capitalize">{userTitle}</span>
 				</span>
 			</>
 		)

@@ -1,13 +1,10 @@
 // components
 import Statistics from './components/Statistics'
-import RevenueChart from './components/RevenueChart'
-import TotalSalesChart from './components/TotalSalesChart'
-import TopSellingProducts from './components/TopSellingProducts'
-import RevenueByLocation from './components/RevenueByLocation'
 import { PageBreadcrumb } from '../../../components'
+import ReactApexChart from 'react-apexcharts'
 
 // dummy data
-import { products } from './data'
+import { spilineAreaApexOpts } from './data'
 
 const Ecommerce = () => {
 	return (
@@ -15,16 +12,14 @@ const Ecommerce = () => {
 			<PageBreadcrumb title="Dashboard" subName="Menu" />
 			<Statistics />
 
-			<div className="grid lg:grid-cols-3 gap-6 mb-6">
-				<RevenueChart />
-				<TotalSalesChart />
-			</div>
-			<div className="grid grid-cols-12 gap-6">
-				<div className="xl:col-span-5 col-span-12">
-					<TopSellingProducts products={products} />
-				</div>
-				<div className="xl:col-span-7 col-span-12">
-					<RevenueByLocation />
+			<div className="grid lg:grid-cols-1 gap-6 mb-6">
+				<div className="card">
+					<div className="p-6">
+						<h4 className="card-title mb-4">Users Verfied</h4>
+						<div dir="ltr">
+							<ReactApexChart className="apex-charts" options={spilineAreaApexOpts} height={380} series={spilineAreaApexOpts.series} type="area" />
+						</div>
+					</div>
 				</div>
 			</div>
 		</>
