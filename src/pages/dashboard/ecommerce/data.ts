@@ -1,4 +1,5 @@
 import { ApexOptions } from 'apexcharts'
+import moment from 'moment'
 
 const products = [
 	{
@@ -45,8 +46,131 @@ const products = [
 	},
 ]
 
+// SUPER ADMIN
+
+export const constructDualVerified = (data: any[], filterType: 'daily' | 'weekly' | 'monthly' | 'yearly') => {
+	const grouped = data.reduce((acc: any, item: any) => {
+		let key = ''
+		let label = ''
+		let year = moment().year()
+		let month = ''
+		let date: moment.Moment
+
+		// 🔹 Determine grouping key and label based on filter type
+		try {
+			if (filterType === 'weekly') {
+				let week: number | null = null
+				let yearStr = moment().year().toString()
+
+				// extract week & year from label
+				const match = item.label?.match(/Week\s(\d+)\s-\s(\d+)/)
+				if (match) {
+					week = parseInt(match[1], 10)
+					yearStr = match[2]
+				}
+
+				if (week) {
+					year = parseInt(yearStr, 10)
+					date = moment().year(year).week(week).startOf('week')
+					month = date.format('MMMM')
+					key = `${year}-W${week}`
+					label = `Week ${week}`
+				}
+			} else if (filterType === 'monthly') {
+				date = moment(item.label, ['YYYY-MM', 'YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				month = date.format('MMMM')
+				year = date.year()
+				key = `${year}-${date.format('MM')}`
+				label = `${date.format('MMM')}`
+			} else if (filterType === 'yearly') {
+				year = parseInt(item.label?.match(/\d{4}/)?.[0] || moment().year())
+				key = `${year}`
+				label = `${year}`
+			} else if (filterType === 'daily') {
+				date = moment(item.label, ['YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				year = date.year()
+				month = date.format('MMMM')
+				key = date.format('YYYY-MM-DD')
+				label = key
+			}
+		} catch {
+			// fallback
+			key = 'unknown'
+			label = 'Unknown'
+		}
+
+		// ✅ Initialize group if missing
+		if (!acc[key]) {
+			acc[key] = { month, year, label, verified_users: 0, non_verified_users: 0 }
+		}
+
+		// ✅ Safely increment
+		acc[key].verified_users += item.verified_users || 0
+		acc[key].non_verified_users += item.non_verified_users || 0
+
+		return acc
+	}, {})
+
+	// ✅ Sort result chronologically
+	const result = Object.values(grouped).sort((a: any, b: any) => moment(a.label, ['YYYY-MM-DD', 'YYYY-MM', 'Week WW - YYYY', 'YYYY']).diff(moment(b.label, ['YYYY-MM-DD', 'YYYY-MM', 'Week WW - YYYY', 'YYYY'])))
+
+	// ✅ Convert to arrays for chart
+	const res: any = result.reduce(
+		(acc: any, curr: any) => {
+			acc.labels.push(curr.label)
+			acc.verified.push(curr.verified_users)
+			acc.not_verified.push(curr.non_verified_users)
+			return acc
+		},
+		{ labels: [], verified: [], not_verified: [] }
+	)
+
+	// ✅ ApexChart Config
+	const spilineAreaApexOpts: ApexOptions = {
+		chart: {
+			height: 380,
+			type: 'area',
+		},
+		dataLabels: {
+			enabled: false,
+		},
+		stroke: {
+			width: 3,
+			curve: 'smooth',
+		},
+		colors: ['#3e60d5', '#6c757d'],
+		series: [
+			{
+				name: 'Verified Users',
+				data: res.verified,
+			},
+			{
+				name: 'Not Verified Users',
+				data: res.not_verified,
+			},
+		],
+		xaxis: {
+			categories: res.labels,
+			labels: { rotate: -45 },
+		},
+		grid: {
+			row: {
+				colors: ['transparent', 'transparent'],
+				opacity: 0.2,
+			},
+			borderColor: '#f1f3fa',
+		},
+		legend: { offsetY: 5 },
+		tooltip: { fixed: { enabled: false } },
+	}
+
+	return spilineAreaApexOpts
+}
+
 // Spiline Area
-export const spilineAreaApexOpts: ApexOptions = {
+export const dailyActiveUserData: ApexOptions = {
 	chart: {
 		height: 380,
 		type: 'area',
@@ -60,10 +184,6 @@ export const spilineAreaApexOpts: ApexOptions = {
 	},
 	colors: ['#3e60d5', '#6c757d'],
 	series: [
-		{
-			name: 'Verified Users',
-			data: [31, 40, 28, 51, 42, 109, 100],
-		},
 		{
 			name: 'Not Verified Users',
 			data: [11, 32, 45, 32, 34, 52, 41],
@@ -91,9 +211,5 @@ export const spilineAreaApexOpts: ApexOptions = {
 			bottom: 5,
 		},
 	},
-	// grid: {
-	//     borderColor: '#f1f3fa',
-
-	// }
 }
 export { products }
