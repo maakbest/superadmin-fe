@@ -34,7 +34,7 @@ const Rewards = () => {
 	const canReject = usePermission('transfer-request:reject')
 
 	const [page, setPage] = useState(1)
-	const [limit, setLimit] = useState(20)
+	const [limit, setLimit] = useState(10)
 
 	const handleAction = (id: string, action: 'approve' | 'reject') => {
 		if (action === 'approve') {
@@ -232,7 +232,7 @@ const Rewards = () => {
 
 					{/* Optional rows per page selector */}
 					<select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border border-gray-300 rounded px-2 py-1 text-sm w-[100px]">
-						{[20, 50, 100].map((n) => (
+						{[10, 20, 50, 100].map((n) => (
 							<option key={n} value={n}>
 								{n} / page
 							</option>

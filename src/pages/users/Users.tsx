@@ -69,6 +69,8 @@ const Users = () => {
 			},
 			user.user_details?.country?.name || 'Unknown',
 			user.risk_score,
+			user.total_booking || 0,
+			user.total_coins || 0,
 		]) || []
 
 	// 🔹 Pagination Logic
@@ -155,6 +157,8 @@ const Users = () => {
 								},
 								'Country',
 								'Risk Score',
+								'Total Booking',
+								'Total Coins',
 							]}
 						/>
 					) : (
@@ -167,11 +171,14 @@ const Users = () => {
 										<th className="px-4 py-2 border-b">Email</th>
 										<th className="px-4 py-2 border-b">Email Verified</th>
 										<th className="px-4 py-2 border-b">Country</th>
+										<th className="px-4 py-2 border-b">Risk Score</th>
+										<th className="px-4 py-2 border-b">Total Booking</th>
+										<th className="px-4 py-2 border-b">Total Coins</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
-										<td colSpan={4} className="text-center py-10 text-gray-500">
+										<td colSpan={7} className="text-center py-10 text-gray-500">
 											<div className="flex flex-col items-center justify-center">
 												{/* Optional icon or illustration */}
 												<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

@@ -7,6 +7,7 @@ import Auth from './auth/reducers'
 import Users from './users/reducers'
 import Rewards from './rewards/reducers'
 import Countries from './countries/reducers'
+import Dashboard from './dashboard/reducers'
 
 // saga
 import rootSaga from './sagas'
@@ -23,6 +24,7 @@ export const store = configureStore({
 		Users: Users,
 		Rewards: Rewards,
 		Countries: Countries,
+		Dashboard: Dashboard,
 	} as any,
 
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
