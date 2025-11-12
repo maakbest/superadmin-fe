@@ -41,7 +41,7 @@ const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince,
 
 	return (
 		<div className="card">
-			<div className="p-6">
+			<div className="p-4">
 				<div className="flex justify-between">
 					<div className="grow overflow-hidden">
 						<h5 className="text-base/3 text-gray-400 font-normal mt-0" title={title}>

@@ -59,6 +59,34 @@ function* getTotalActive(params: any): SagaIterator {
 	}
 }
 
+function* getNewSignupUsers(params: any): SagaIterator {
+	try {
+		// ✅ Dispatch loading before API call
+		yield put(dashboardApiResponseLoading(DashboardActionTypes.API_RESPONSE_LOADING))
+		const response = yield call(getTotalActiveApi, params.payload)
+		const dashboard = response.data
+		// Dispatch success action
+		yield put(dashboardApiResponseSuccess(DashboardActionTypes.GET_NEW_SIGNUP_USERS, dashboard))
+	} catch (error: any) {
+		// Dispatch error action
+		yield put(dashboardApiResponseError(DashboardActionTypes.GET_NEW_SIGNUP_USERS, error))
+	}
+}
+
+function* getNewSignupUsersNotOnboarding(params: any): SagaIterator {
+	try {
+		// ✅ Dispatch loading before API call
+		yield put(dashboardApiResponseLoading(DashboardActionTypes.API_RESPONSE_LOADING))
+		const response = yield call(getTotalActiveApi, params.payload)
+		const dashboard = response.data
+		// Dispatch success action
+		yield put(dashboardApiResponseSuccess(DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING, dashboard))
+	} catch (error: any) {
+		// Dispatch error action
+		yield put(dashboardApiResponseError(DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING, error))
+	}
+}
+
 function* getRegisteredUsers(params: any): SagaIterator {
 	try {
 		// ✅ Dispatch loading before API call
@@ -93,10 +121,18 @@ export function* watchGetRegisteredUsers() {
 	yield takeEvery(DashboardActionTypes.GET_REGISTERED_USERS, getRegisteredUsers)
 }
 
+export function* watchGetNewSignupUsers() {
+	yield takeEvery(DashboardActionTypes.GET_NEW_SIGNUP_USERS, getNewSignupUsers)
+}
+
+export function* watchGetNewSignupUsersNotOnboarding() {
+	yield takeEvery(DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING, getNewSignupUsersNotOnboarding)
+}
+
 /**
  * Root Dashboard Saga
  */
 
 export default function* dashboardSaga() {
-	yield all([fork(watchGetDailyActiveUsers), fork(watchGetVerifiedNotVerifiedUsers), fork(watchGetTotalActive), fork(watchGetRegisteredUsers)])
+	yield all([fork(watchGetDailyActiveUsers), fork(watchGetVerifiedNotVerifiedUsers), fork(watchGetTotalActive), fork(watchGetRegisteredUsers), fork(watchGetNewSignupUsers), fork(watchGetNewSignupUsersNotOnboarding)])
 }

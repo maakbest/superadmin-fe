@@ -1,4 +1,5 @@
 import { ApexOptions } from 'apexcharts'
+import moment from 'moment'
 
 const products = [
 	{
@@ -46,52 +47,87 @@ const products = [
 ]
 
 // SUPER ADMIN
-import moment from 'moment'
 
-// const data = [
-//   { label: "Week 42 - 2025", verified_users: 2, non_verified_users: 1 },
-//   { label: "Week 43 - 2025", verified_users: 5, non_verified_users: 9 },
-//   { label: "Week 44 - 2025", verified_users: 3, non_verified_users: 5 },
-//   { label: "Week 45 - 2025", verified_users: 4, non_verified_users: 0 },
-// ];
+export const constructDualVerified = (data: any[], filterType: 'daily' | 'weekly' | 'monthly' | 'yearly') => {
+	const grouped = data.reduce((acc: any, item: any) => {
+		let key = ''
+		let label = ''
+		let year = moment().year()
+		let month = ''
+		let date: moment.Moment
 
-export const constructDualVerified = (data: any) => {
-	const groupedByMonth = data.reduce((acc: any, item: any) => {
-		// Extract week and year
-		const [_, weekStr, yearStr] = item.label.match(/Week\s(\d+)\s-\s(\d+)/) || []
-		const week = parseInt(weekStr, 10)
-		const year = parseInt(yearStr, 10)
+		// 🔹 Determine grouping key and label based on filter type
+		try {
+			if (filterType === 'weekly') {
+				let week: number | null = null
+				let yearStr = moment().year().toString()
 
-		// ✅ Get month name for that week
-		const date = moment().year(year).week(week).startOf('week')
-		const month = date.format('MMMM') // e.g. "October"
+				// extract week & year from label
+				const match = item.label?.match(/Week\s(\d+)\s-\s(\d+)/)
+				if (match) {
+					week = parseInt(match[1], 10)
+					yearStr = match[2]
+				}
 
-		const key = `${month}-${year}` // unique key for grouping
-
-		if (!acc[key]) {
-			acc[key] = { month, year, verified_users: 0, non_verified_users: 0 }
+				if (week) {
+					year = parseInt(yearStr, 10)
+					date = moment().year(year).week(week).startOf('week')
+					month = date.format('MMMM')
+					key = `${year}-W${week}`
+					label = `Week ${week}`
+				}
+			} else if (filterType === 'monthly') {
+				date = moment(item.label, ['YYYY-MM', 'YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				month = date.format('MMMM')
+				year = date.year()
+				key = `${year}-${date.format('MM')}`
+				label = `${date.format('MMM')}`
+			} else if (filterType === 'yearly') {
+				year = parseInt(item.label?.match(/\d{4}/)?.[0] || moment().year())
+				key = `${year}`
+				label = `${year}`
+			} else if (filterType === 'daily') {
+				date = moment(item.label, ['YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				year = date.year()
+				month = date.format('MMMM')
+				key = date.format('YYYY-MM-DD')
+				label = key
+			}
+		} catch {
+			// fallback
+			key = 'unknown'
+			label = 'Unknown'
 		}
 
-		acc[key].verified_users += item.verified_users
-		acc[key].non_verified_users += item.non_verified_users
+		// ✅ Initialize group if missing
+		if (!acc[key]) {
+			acc[key] = { month, year, label, verified_users: 0, non_verified_users: 0 }
+		}
+
+		// ✅ Safely increment
+		acc[key].verified_users += item.verified_users || 0
+		acc[key].non_verified_users += item.non_verified_users || 0
 
 		return acc
 	}, {})
 
-	// ✅ Convert to sorted array by year & month order
-	const result = Object.values(groupedByMonth).sort((a: any, b: any) => moment(`${a.month} ${a.year}`, 'MMMM YYYY').diff(moment(`${b.month} ${b.year}`, 'MMMM YYYY')))
+	// ✅ Sort result chronologically
+	const result = Object.values(grouped).sort((a: any, b: any) => moment(a.label, ['YYYY-MM-DD', 'YYYY-MM', 'Week WW - YYYY', 'YYYY']).diff(moment(b.label, ['YYYY-MM-DD', 'YYYY-MM', 'Week WW - YYYY', 'YYYY'])))
 
+	// ✅ Convert to arrays for chart
 	const res: any = result.reduce(
 		(acc: any, curr: any) => {
-			acc.month.push(curr.month)
-			acc.year.push(curr.year)
+			acc.labels.push(curr.label)
 			acc.verified.push(curr.verified_users)
 			acc.not_verified.push(curr.non_verified_users)
 			return acc
 		},
-		{ month: [], year: [], verified: [], not_verified: [] }
+		{ labels: [], verified: [], not_verified: [] }
 	)
 
+	// ✅ ApexChart Config
 	const spilineAreaApexOpts: ApexOptions = {
 		chart: {
 			height: 380,
@@ -115,77 +151,65 @@ export const constructDualVerified = (data: any) => {
 				data: res.not_verified,
 			},
 		],
-		legend: {
-			offsetY: 5,
-		},
 		xaxis: {
-			categories: res.month,
-		},
-		tooltip: {
-			fixed: {
-				enabled: false,
-				position: 'topRight',
-			},
+			categories: res.labels,
+			labels: { rotate: -45 },
 		},
 		grid: {
 			row: {
-				colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+				colors: ['transparent', 'transparent'],
 				opacity: 0.2,
 			},
 			borderColor: '#f1f3fa',
-			padding: {
-				bottom: 5,
-			},
 		},
+		legend: { offsetY: 5 },
+		tooltip: { fixed: { enabled: false } },
 	}
+
 	return spilineAreaApexOpts
 }
 
 // Spiline Area
-// export const spilineAreaApexOpts: ApexOptions = {
-// 	chart: {
-// 		height: 380,
-// 		type: 'area',
-// 	},
-// 	dataLabels: {
-// 		enabled: false,
-// 	},
-// 	stroke: {
-// 		width: 3,
-// 		curve: 'smooth',
-// 	},
-// 	colors: ['#3e60d5', '#6c757d'],
-// 	series: [
-// 		{
-// 			name: 'Verified Users',
-// 			data: [31, 40, 28, 51, 42, 109, 100],
-// 		},
-// 		{
-// 			name: 'Not Verified Users',
-// 			data: [11, 32, 45, 32, 34, 52, 41],
-// 		},
-// 	],
-// 	legend: {
-// 		offsetY: 5,
-// 	},
-// 	xaxis: {
-// 		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-// 	},
-// 	tooltip: {
-// 		fixed: {
-// 			enabled: false,
-// 			position: 'topRight',
-// 		},
-// 	},
-// 	grid: {
-// 		row: {
-// 			colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
-// 			opacity: 0.2,
-// 		},
-// 		borderColor: '#f1f3fa',
-// 		padding: {
-// 			bottom: 5,
-// 		},
-// 	},
-// }
+export const dailyActiveUserData: ApexOptions = {
+	chart: {
+		height: 380,
+		type: 'area',
+	},
+	dataLabels: {
+		enabled: false,
+	},
+	stroke: {
+		width: 3,
+		curve: 'smooth',
+	},
+	colors: ['#3e60d5', '#6c757d'],
+	series: [
+		{
+			name: 'Not Verified Users',
+			data: [11, 32, 45, 32, 34, 52, 41],
+		},
+	],
+	legend: {
+		offsetY: 5,
+	},
+	xaxis: {
+		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+	},
+	tooltip: {
+		fixed: {
+			enabled: false,
+			position: 'topRight',
+		},
+	},
+	grid: {
+		row: {
+			colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+			opacity: 0.2,
+		},
+		borderColor: '#f1f3fa',
+		padding: {
+			bottom: 5,
+		},
+	},
+}
 export { products }

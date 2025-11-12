@@ -11,6 +11,8 @@ const INIT_STATE = {
 	dailyActiveUsers: [],
 	registeredUsers: [],
 	verifiedNotVerifiedUsers: [],
+	newSignUsers: null,
+	newSignUsersNotOnboarding: null,
 	loading: false,
 	error: '',
 }
@@ -20,6 +22,8 @@ interface State {
 	dailyActiveUsers: any[]
 	registeredUsers: any[]
 	verifiedNotVerifiedUsers: any[]
+	newSignUsers: any
+	newSignUsersNotOnboarding: any
 	loading?: boolean
 	error: string
 }
@@ -75,6 +79,28 @@ const Dashboard = (state: State = INIT_STATE, action: any): any => {
 						error: '',
 					}
 				}
+
+				case DashboardActionTypes.GET_NEW_SIGNUP_USERS: {
+					const { data } = action.payload
+
+					return {
+						...state,
+						newSignUsers: data.top_active_users,
+						loading: false,
+						error: '',
+					}
+				}
+
+				case DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING: {
+					const { data } = action.payload
+
+					return {
+						...state,
+						newSignUsersNotOnboarding: data.top_active_users,
+						loading: false,
+						error: '',
+					}
+				}
 				default:
 					return { ...state }
 			}
@@ -106,6 +132,22 @@ const Dashboard = (state: State = INIT_STATE, action: any): any => {
 				}
 
 				case DashboardActionTypes.GET_VERIFIED_NOT_VERIFIED_USERS: {
+					return {
+						...state,
+						error: action.payload.error,
+						loading: false,
+					}
+				}
+
+				case DashboardActionTypes.GET_NEW_SIGNUP_USERS: {
+					return {
+						...state,
+						error: action.payload.error,
+						loading: false,
+					}
+				}
+
+				case DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING: {
 					return {
 						...state,
 						error: action.payload.error,

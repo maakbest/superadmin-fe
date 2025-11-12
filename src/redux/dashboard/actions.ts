@@ -37,6 +37,16 @@ export const getDailyActiveUsersActions = (data: any, params: any) => ({
 	payload: { data, params },
 })
 
+export const getDailySignupUsersActions = (data: any, params: any) => ({
+	type: DashboardActionTypes.GET_NEW_SIGNUP_USERS,
+	payload: { data, params },
+})
+
+export const getDailySignupNotOnboardingUsersActions = (data: any, params: any) => ({
+	type: DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING,
+	payload: { data, params },
+})
+
 export const dashboardApiResponseLoading = (actionType: string) => ({
 	type: DashboardActionTypes.API_RESPONSE_LOADING,
 	payload: { actionType },
