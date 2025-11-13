@@ -45,7 +45,7 @@ const Ecommerce = () => {
 			<PageBreadcrumb title="Dashboard" subName="Menu" />
 			<Statistics />
 
-			<div className="grid lg:grid-cols-2 gap-6 mb-6">
+			<div className="grid lg:grid-cols-1 gap-6 mb-6">
 				<div className="card">
 					<div className="p-6">
 						<h4 className="card-title mb-4">Users Verfied</h4>
