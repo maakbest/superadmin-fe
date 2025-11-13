@@ -5,7 +5,7 @@ const Statistics = () => {
 	const { newSignUsersNotOnboarding, dailyActiveUsers, registeredUsers, newSignUsers } = useSelector((state: any) => state.Dashboard)
 
 	return (
-		<div className="grid 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-6 mb-6">
+		<div className="grid 2xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 gap-6 mb-6">
 			<div className="2xl:col-span-1 lg:col-span-1">
 				<StatisticsWidget variant={'bg-success'} cardTitle={'Total Users'} title={'No of Users'} stats={registeredUsers} classname={'apex-charts'} chartSeries={[registeredUsers, 0]} colors={['#47ad77', '#e3e9ee']} />
 			</div>
