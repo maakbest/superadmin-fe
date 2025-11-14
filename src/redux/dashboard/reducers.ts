@@ -53,7 +53,7 @@ const Dashboard = (state: State = INIT_STATE, action: any): any => {
 					const { data } = action.payload
 					return {
 						...state,
-						totalActiveUsers: data.top_active_users,
+						totalActiveUsers: data.data,
 						loading: false,
 						error: '',
 					}
@@ -82,10 +82,9 @@ const Dashboard = (state: State = INIT_STATE, action: any): any => {
 
 				case DashboardActionTypes.GET_NEW_SIGNUP_USERS: {
 					const { data } = action.payload
-
 					return {
 						...state,
-						newSignUsers: data.top_active_users,
+						newSignUsers: data.count,
 						loading: false,
 						error: '',
 					}
@@ -96,7 +95,7 @@ const Dashboard = (state: State = INIT_STATE, action: any): any => {
 
 					return {
 						...state,
-						newSignUsersNotOnboarding: data.top_active_users,
+						newSignUsersNotOnboarding: data.count,
 						loading: false,
 						error: '',
 					}

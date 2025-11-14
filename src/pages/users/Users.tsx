@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Grid, _ } from 'gridjs-react'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,13 @@ import GoogleIcon from '../ui/icons/GoogleIcon'
 import { CountriesActionTypes } from '@/redux/countries/constants'
 import SearchableDropdown from '@/components/SearchableDropdown/SearchableDropdown'
 import { useDebounce } from '@/hooks'
+
+const tdStyle = {
+	maxWidth: '100%',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+}
 
 const Users = () => {
 	const dispatch = useDispatch()
@@ -23,6 +30,33 @@ const Users = () => {
 	const [page, setPage] = useState(1)
 	const [limit, setLimit] = useState(10)
 
+	// 🔹 Fetch countries once
+	useEffect(() => {
+		dispatch({ type: CountriesActionTypes.GET_COUNTRIES })
+	}, [dispatch])
+
+	// ✅ FIX: Wrapped fetchUsers in useCallback to prevent infinite loops
+	const fetchUsers = useCallback(
+		(p = 1) => {
+			const params: Record<string, any> = { page: p, per_page: limit }
+
+			if (debouncedSearchTerm.trim()) params.search = debouncedSearchTerm
+			if (countryFilter.code !== 'all') params.country = countryFilter.code
+			if (verifiedFilter !== 'all') params.is_email_verified = verifiedFilter === 'yes'
+			if (authProvider !== 'all') params.auth_provider = authProvider
+			if (riskScore !== 'all') params.risk_score = riskScore
+
+			dispatch({ type: UsersActionTypes.GET_USERS, payload: params })
+		},
+		[limit, debouncedSearchTerm, countryFilter.code, verifiedFilter, authProvider, riskScore, dispatch]
+	)
+
+	// 🔹 Fetch when filters change
+	useEffect(() => {
+		fetchUsers(page)
+	}, [fetchUsers, page]) // ✅ FIXED dependencies
+
+	// 🔹 Reset Filters Fully Fixed
 	const handleResetFilters = () => {
 		setSearchTerm('')
 		setVerifiedFilter('all')
@@ -34,29 +68,6 @@ const Users = () => {
 
 		fetchUsers(1)
 	}
-
-	// 🔹 Fetch filters
-	useEffect(() => {
-		dispatch({ type: CountriesActionTypes.GET_COUNTRIES })
-	}, [dispatch])
-
-	// 🔹 Fetch users when filters/page change
-	const fetchUsers = (p = 1) => {
-		const params: Record<string, any> = { page: p, per_page: limit }
-
-		if (debouncedSearchTerm.trim()) params.search = debouncedSearchTerm
-
-		if (countryFilter.code !== 'all') params.country = countryFilter.code
-		if (verifiedFilter !== 'all') params.is_email_verified = verifiedFilter === 'yes'
-		if (authProvider !== 'all') params.auth_provider = authProvider
-		if (riskScore !== 'all') params.risk_score = riskScore
-
-		dispatch({ type: UsersActionTypes.GET_USERS, payload: params })
-	}
-
-	useEffect(() => {
-		fetchUsers(page)
-	}, [debouncedSearchTerm, countryFilter, verifiedFilter, authProvider, page, riskScore, limit])
 
 	// 🔹 Table data
 	const tableData =
@@ -70,13 +81,16 @@ const Users = () => {
 			user.user_details?.country?.name || 'Unknown',
 			user.risk_score,
 			user.total_booking || 0,
-			user.total_coins || 0,
+			0,
 		]) || []
 
-	// 🔹 Pagination Logic
+	// 🔹 Pagination logic
 	const totalPages = Math.ceil((meta?.total || 0) / limit)
+
 	const goToPage = (newPage: number) => {
-		if (newPage >= 1 && newPage <= totalPages) setPage(newPage)
+		if (newPage >= 1 && newPage <= totalPages) {
+			setPage(newPage)
+		}
 	}
 
 	return (
@@ -93,6 +107,7 @@ const Users = () => {
 				</div>
 				<div className="p-6">
 					<h4 className="card-title mb-4">Filters</h4>
+
 					{/* 🔹 Filters */}
 					<div className="flex flex-wrap gap-3 mb-4 items-center">
 						<input type="text" placeholder="Search by name or email" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="border border-gray-300 rounded px-3 py-2 text-sm w-full sm:w-64" />
@@ -114,7 +129,7 @@ const Users = () => {
 							<option value="0-25">0 - 25</option>
 							<option value="25-50">25 - 50</option>
 							<option value="50-75">50 - 75</option>
-							<option value="50-75">75 - 100</option>
+							<option value="75-100">75 - 100</option>
 						</select>
 
 						<SearchableDropdown options={[{ name: 'All Countries', code: 'all' }, ...allCountries]} selected={countryFilter} onSelect={setCountryFilter} labelKey="name" className="w-[200px]" />
@@ -135,6 +150,7 @@ const Users = () => {
 									backgroundColor: 'rgba(0, 0, 0, 0.05)',
 									fontWeight: '600',
 								},
+								td: tdStyle, // ⬅️ APPLY ELLIPSIS HERE
 							}}
 							columns={[
 								'Name',
@@ -151,6 +167,7 @@ const Users = () => {
 												) : (
 													<span className="px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-600">Not Verified</span>
 												)}
+
 												{cell.auth_provider === 'google' && <GoogleIcon />}
 											</div>
 										),
@@ -163,7 +180,6 @@ const Users = () => {
 						/>
 					) : (
 						<div className="border rounded-md overflow-hidden">
-							{/* ✅ Custom Empty Table with Headers */}
 							<table className="min-w-full text-sm text-left border-collapse">
 								<thead className="bg-gray-100 text-gray-700 font-semibold">
 									<tr>
@@ -180,8 +196,7 @@ const Users = () => {
 									<tr>
 										<td colSpan={7} className="text-center py-10 text-gray-500">
 											<div className="flex flex-col items-center justify-center">
-												{/* Optional icon or illustration */}
-												<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+												<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" sstrokeWidth={1.5}>
 													<path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
 												</svg>
 												<span className="text-gray-600 font-medium">No records found</span>
@@ -193,7 +208,7 @@ const Users = () => {
 						</div>
 					)}
 
-					{/* 🔹 Custom Pagination */}
+					{/* 🔹 Pagination */}
 					<div className="flex justify-between items-center mt-4">
 						<div className="text-sm text-gray-600">
 							Showing page {page} of {totalPages || 1}
@@ -215,7 +230,6 @@ const Users = () => {
 							</button>
 						</div>
 
-						{/* Optional rows per page selector */}
 						<select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border border-gray-300 rounded px-2 py-1 text-sm w-[100px]">
 							{[10, 20, 50, 100].map((n) => (
 								<option key={n} value={n}>

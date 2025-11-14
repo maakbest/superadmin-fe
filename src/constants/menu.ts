@@ -728,14 +728,14 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		label: 'Dashboard',
 		isTitle: false,
 		icon: 'ri-home-line',
-		url: '/dashboard',
+		url: '/',
 	},
 	{
 		key: 'apps-calendar',
 		label: 'Users',
 		isTitle: false,
 		icon: 'ri-user-3-line',
-		url: '/',
+		url: '/users',
 	},
 	{
 		key: 'apps-calendar',

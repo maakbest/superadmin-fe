@@ -832,7 +832,7 @@ const otherPublicRoutes = [
 
 // SUPER ADMIN APP
 const userRouter: RoutesProps = {
-	path: '/',
+	path: '/users',
 	name: 'Users',
 	route: PrivateRoute,
 	roles: ['Admin'],
@@ -852,7 +852,7 @@ const rewardsRouter: RoutesProps = {
 }
 
 const dashboardSA: RoutesProps = {
-	path: '/dashboard',
+	path: '/',
 	name: 'Dashboard',
 	element: <Ecommerce />,
 	route: PrivateRoute,

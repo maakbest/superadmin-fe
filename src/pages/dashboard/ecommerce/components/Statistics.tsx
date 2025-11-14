@@ -15,11 +15,11 @@ const Statistics = () => {
 			</div>
 
 			<div className="2xl:col-span-1 lg:col-span-1">
-				<StatisticsWidget variant={'bg-danger'} cardTitle={'New Signups'} title={'No of New Signups'} stats={newSignUsers?.length || 0} classname={'apex-charts'} chartSeries={[registeredUsers, newSignUsers?.length || 0]} colors={['#16a7e9', '#e3e9ee']} />
+				<StatisticsWidget variant={'bg-danger'} cardTitle={'New Signups'} title={'No of New Signups'} stats={newSignUsers} classname={'apex-charts'} chartSeries={[newSignUsers, registeredUsers]} colors={['#16a7e9', '#e3e9ee']} />
 			</div>
 
 			<div className="2xl:col-span-1 lg:col-span-1">
-				<StatisticsWidget variant={'bg-danger'} cardTitle={'New Signups Not On Boarded'} title={'No of New Signups'} stats={newSignUsersNotOnboarding?.length || 0} classname={'apex-charts'} chartSeries={[newSignUsers?.length || 0, newSignUsersNotOnboarding?.length || 0]} colors={['#16a7e9', '#e3e9ee']} />
+				<StatisticsWidget variant={'bg-danger'} cardTitle={'New Signups Not On Boarded'} title={'No of New Signups'} stats={newSignUsersNotOnboarding} classname={'apex-charts'} chartSeries={[newSignUsers, newSignUsersNotOnboarding]} colors={['#16a7e9', '#e3e9ee']} />
 			</div>
 		</div>
 	)

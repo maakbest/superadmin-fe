@@ -40,7 +40,7 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 				case CountriesActionTypes.GET_COUNTRIES: {
 					return {
 						...state,
-						error: action.payload.error,
+						error: action.payload.error.message,
 						loading: false,
 					}
 				}

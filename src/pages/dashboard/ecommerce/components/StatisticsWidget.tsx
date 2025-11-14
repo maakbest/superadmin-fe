@@ -44,10 +44,10 @@ const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince,
 			<div className="p-4">
 				<div className="flex justify-between">
 					<div className="grow overflow-hidden">
-						<h5 className="text-base/3 text-gray-400 font-normal mt-0" title={title}>
+						<h5 className="text-base/3 text-gray-400 font-normal mt-0 leading-5" title={title}>
 							{cardTitle}
 						</h5>
-						<h3 className="text-2xl my-6">{stats}</h3>
+						<h3 className="text-2xl my-4">{stats}</h3>
 						{(change || dataSince) && (
 							<p className="text-gray-400 truncate">
 								{change && (
@@ -60,9 +60,9 @@ const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince,
 							</p>
 						)}
 					</div>
-					<div className="shrink">
+					{/* <div className="shrink">
 						<ReactApexCharts className={classname} options={apexOpts} series={chartSeries} type="donut" width={95} height={95} />
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

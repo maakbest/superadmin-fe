@@ -169,6 +169,102 @@ export const constructDualVerified = (data: any[], filterType: 'daily' | 'weekly
 	return spilineAreaApexOpts
 }
 
+export const buildGenericApexSeries = (data: any[], filterType: 'daily' | 'weekly' | 'monthly' | 'yearly') => {
+	// console.log('data', data)
+	// if (!Array.isArray(data)) return []
+	const grouped = data.reduce((acc: any, item: any) => {
+		let key = ''
+		let label = ''
+		let year = moment().year()
+		let month = ''
+		let date: moment.Moment
+
+		try {
+			if (filterType === 'weekly') {
+				let week: number | null = null
+				let yearStr = moment().year().toString()
+
+				const match = item.label?.match(/Week\s(\d+)\s-\s(\d+)/)
+				if (match) {
+					week = parseInt(match[1], 10)
+					yearStr = match[2]
+				}
+
+				if (week) {
+					year = parseInt(yearStr, 10)
+					date = moment().year(year).week(week).startOf('week')
+					month = date.format('MMMM')
+					key = `${year}-W${week}`
+					label = `Week ${week}`
+				}
+			} else if (filterType === 'monthly') {
+				date = moment(item.label, ['YYYY-MM', 'YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				month = date.format('MMMM')
+				year = date.year()
+				key = `${year}-${date.format('MM')}`
+				label = `${date.format('MMM')}`
+			} else if (filterType === 'yearly') {
+				year = parseInt(item.label?.match(/\d{4}/)?.[0] || moment().year())
+				key = `${year}`
+				label = `${year}`
+			} else if (filterType === 'daily') {
+				date = moment(item.label, ['YYYY-MM-DD', moment.ISO_8601], true)
+				if (!date.isValid()) date = moment()
+				year = date.year()
+				month = date.format('MMMM')
+				key = date.format('YYYY-MM-DD')
+				label = key
+			}
+		} catch {
+			key = 'unknown'
+			label = 'Unknown'
+		}
+
+		if (!acc[key]) {
+			acc[key] = { month, year, label }
+		}
+
+		for (const k in item) {
+			if (k !== 'label' && typeof item[k] === 'number') {
+				acc[key][k] = (acc[key][k] || 0) + item[k]
+			}
+		}
+
+		return acc
+	}, {})
+
+	const result = Object.values(grouped).sort((a: any, b: any) => moment(a.label).diff(moment(b.label)))
+
+	// ensure TypeScript knows the shape and handle empty result
+	const first = result[0] as Record<string, any> | undefined
+	const seriesKeys = first ? Object.keys(first).filter((k) => k !== 'label' && k !== 'month' && k !== 'year') : []
+
+	const labels = result.map((x: any) => x.label)
+
+	const series = seriesKeys.map((key) => ({
+		name: key.replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()),
+		data: result.map((x: any) => x[key] || 0),
+	}))
+
+	const spilineAreaApexOpts: ApexOptions = {
+		chart: { height: 380, type: 'area' },
+		dataLabels: { enabled: false },
+		stroke: { width: 3, curve: 'smooth' },
+		colors: ['#3e60d5', '#6c757d', '#ff9800', '#4caf50'],
+		series,
+		xaxis: { categories: labels, labels: { rotate: -45 } },
+		grid: {
+			row: { colors: ['transparent', 'transparent'], opacity: 0.2 },
+			borderColor: '#f1f3fa',
+		},
+		legend: { offsetY: 5 },
+		tooltip: { fixed: { enabled: false } },
+	}
+
+	return spilineAreaApexOpts
+}
+
 // Spiline Area
 export const dailyActiveUserData: ApexOptions = {
 	chart: {
