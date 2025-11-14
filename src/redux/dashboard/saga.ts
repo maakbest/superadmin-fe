@@ -63,7 +63,7 @@ function* getNewSignupUsers(params: any): SagaIterator {
 	try {
 		// ✅ Dispatch loading before API call
 		yield put(dashboardApiResponseLoading(DashboardActionTypes.API_RESPONSE_LOADING))
-		const response = yield call(getTotalActiveApi, params.payload)
+		const response = yield call(getRegisteredUsersApi, params.payload)
 		const dashboard = response.data
 		// Dispatch success action
 		yield put(dashboardApiResponseSuccess(DashboardActionTypes.GET_NEW_SIGNUP_USERS, dashboard))
@@ -77,7 +77,7 @@ function* getNewSignupUsersNotOnboarding(params: any): SagaIterator {
 	try {
 		// ✅ Dispatch loading before API call
 		yield put(dashboardApiResponseLoading(DashboardActionTypes.API_RESPONSE_LOADING))
-		const response = yield call(getTotalActiveApi, params.payload)
+		const response = yield call(getRegisteredUsersApi, params.payload)
 		const dashboard = response.data
 		// Dispatch success action
 		yield put(dashboardApiResponseSuccess(DashboardActionTypes.GET_NEW_SIGNUP_USERS_NOT_ONBOARDING, dashboard))
