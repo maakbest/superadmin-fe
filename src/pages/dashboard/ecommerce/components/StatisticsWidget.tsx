@@ -13,7 +13,7 @@ interface StatisticsWidgetProps {
 	colors: string[]
 }
 
-const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince, classname, chartSeries, colors }: StatisticsWidgetProps) => {
+const StatisticsWidget = ({ variant, cardTitle, title, stats, change, dataSince, colors }: StatisticsWidgetProps) => {
 	const apexOpts: ApexOptions = {
 		chart: {
 			height: 72,
