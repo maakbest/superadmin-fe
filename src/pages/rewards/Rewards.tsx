@@ -132,7 +132,7 @@ const Rewards = () => {
 							columns={[
 								{
 									name: 'User Details',
-									formatter: (cell: any, row: any) => {
+									formatter: (cell: any) => {
 										if (!cell)
 											return html(`
 											<div class="flex flex-col">
