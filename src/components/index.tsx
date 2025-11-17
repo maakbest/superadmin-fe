@@ -7,3 +7,7 @@ import { FileUploader } from './FileUploader'
 import Preloader from './Preloader'
 
 export { VerticalForm, FormInput, CustomDatepicker, PageBreadcrumb, handleDismiss, FileUploader, Preloader }
+
+// BY SUPER ADMIN
+export { default as Drawer } from './Drawer/Drawer'
+export { default as Timeline } from './Timeline/Timeline'

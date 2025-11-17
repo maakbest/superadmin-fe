@@ -32,26 +32,6 @@ function* getAllCountriess(): SagaIterator {
 	}
 }
 
-// ✅ REFRESH FLOW (runs on every app load / refresh)
-export function* loadCountriesRefresh(): SagaIterator {
-	try {
-		const savedUser = getAuthSession() // from localStorage
-		if (savedUser?.token) {
-			setAuthorization(savedUser.token)
-
-			// always call API to get latest data
-			const res = yield call(getAllCountriess)
-			const response = res.data
-
-			yield put(countriesApiResponseSuccess(CountriesActionTypes.GET_COUNTRIES, response))
-		}
-	} catch (error: any) {
-		yield put(countriesApiResponseError(CountriesActionTypes.GET_COUNTRIES, error))
-		api.setLoggedInUser(null)
-		setAuthorization(null)
-	}
-}
-
 /**
  * Watcher Saga
  */
@@ -63,5 +43,5 @@ export function* watchGetCountriess() {
  * Root Countriess Saga
  */
 export default function* countriesSaga() {
-	yield all([takeEvery(CountriesActionTypes.GET_COUNTRIES, getAllCountriess), fork(loadCountriesRefresh), fork(watchGetCountriess)])
+	yield all([fork(watchGetCountriess)])
 }
