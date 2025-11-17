@@ -7,6 +7,7 @@ import GoogleIcon from '../ui/icons/GoogleIcon'
 import { CountriesActionTypes } from '@/redux/countries/constants'
 import SearchableDropdown from '@/components/SearchableDropdown/SearchableDropdown'
 import { useDebounce } from '@/hooks'
+import { formatUSD } from '@/utils/format'
 
 const tdStyle = {
 	maxWidth: '100%',
@@ -81,7 +82,7 @@ const Users = () => {
 			user.user_details?.country?.name || 'Unknown',
 			user.risk_score,
 			user.total_booking || 0,
-			0,
+			formatUSD(user.total_coins[0]?.total_active_coins / 100 || 0),
 		]) || []
 
 	// 🔹 Pagination logic

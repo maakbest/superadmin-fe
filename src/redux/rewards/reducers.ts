@@ -8,6 +8,7 @@ const api = new APICore()
 
 const INIT_STATE: State = {
 	allRewards: [],
+	timelineData: [],
 	loading: false,
 	request_status: 'DEFAULT',
 	meta: {},
@@ -15,6 +16,7 @@ const INIT_STATE: State = {
 
 interface State {
 	allRewards?: any
+	timelineData: any
 	loading?: boolean
 	value?: boolean
 	request_status: 'DEFAULT' | 'APPROVED' | 'REJECTED'
@@ -41,6 +43,15 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 						loading: false,
 					}
 				}
+
+				case RewardsActionTypes.GET_REWARDS_TIMELINE: {
+					const { data } = action.payload
+					return {
+						...state,
+						timelineData: data.data,
+						loading: false,
+					}
+				}
 				case RewardsActionTypes.REQUEST_APPROVED: {
 					return {
 						...state,
@@ -62,6 +73,16 @@ const Auth = (state: State = INIT_STATE, action: any): any => {
 				case RewardsActionTypes.GET_REWARDS: {
 					return {
 						...state,
+						allRewards: [],
+						error: action.payload.error,
+						loading: false,
+					}
+				}
+
+				case RewardsActionTypes.GET_REWARDS_TIMELINE: {
+					return {
+						...state,
+						timelineData: [],
 						error: action.payload.error,
 						loading: false,
 					}

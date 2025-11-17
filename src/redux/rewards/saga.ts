@@ -1,7 +1,7 @@
 import { all, fork, put, takeEvery, call } from 'redux-saga/effects'
 import { SagaIterator } from '@redux-saga/core'
 import { APICore } from '../../helpers/api/apiCore'
-import { getrewards as getRewardsApi, approveRequest as approveRequestApi, rejectRequest as rejectRequestApi } from '../../helpers/api/rewards'
+import { getrewards as getRewardsApi, approveRequest as approveRequestApi, rejectRequest as rejectRequestApi, getrewardstimeline as getRewardsTimelineApi } from '../../helpers/api/rewards'
 import { rewardsApiResponseSuccess, rewardsApiResponseError, rewardsApiResponseLoading } from './actions'
 import { RewardsActionTypes } from './constants'
 
@@ -20,6 +20,23 @@ function* getAllRewards(params: any): SagaIterator {
 		yield put(rewardsApiResponseSuccess(RewardsActionTypes.GET_REWARDS, rewards))
 	} catch (error: any) {
 		yield put(rewardsApiResponseError(RewardsActionTypes.GET_REWARDS, error))
+	}
+}
+
+/**
+ * Get All Rewards Timeline Saga
+ */
+
+function* getRewardsTimeline({ payload: id }: any): SagaIterator {
+	try {
+		// ✅ Dispatch loading before API call
+		yield put(rewardsApiResponseLoading(RewardsActionTypes.API_RESPONSE_LOADING))
+
+		const response = yield call(getRewardsTimelineApi, id)
+		const rewards = response.data
+		yield put(rewardsApiResponseSuccess(RewardsActionTypes.GET_REWARDS_TIMELINE, rewards))
+	} catch (error: any) {
+		yield put(rewardsApiResponseError(RewardsActionTypes.GET_REWARDS_TIMELINE, error))
 	}
 }
 
@@ -66,6 +83,10 @@ export function* watchGetRewards() {
 	yield takeEvery(RewardsActionTypes.GET_REWARDS, getAllRewards)
 }
 
+export function* watchGetRewardsTimeline() {
+	yield takeEvery(RewardsActionTypes.GET_REWARDS_TIMELINE, getRewardsTimeline)
+}
+
 export function* watchRequestApproved() {
 	yield takeEvery(RewardsActionTypes.REQUEST_APPROVED, approveRewardRequest)
 }
@@ -78,5 +99,5 @@ export function* watchRequestRejected() {
  * Root Saga
  */
 export default function* rewardsSaga() {
-	yield all([fork(watchGetRewards), fork(watchRequestApproved), fork(watchRequestRejected)])
+	yield all([fork(watchGetRewards), fork(watchGetRewardsTimeline), fork(watchRequestApproved), fork(watchRequestRejected)])
 }

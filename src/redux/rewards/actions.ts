@@ -2,7 +2,7 @@
 import { RewardsActionTypes } from './constants'
 
 export interface RewardsActionType {
-	type: RewardsActionTypes.API_RESPONSE_SUCCESS | RewardsActionTypes.API_RESPONSE_ERROR | RewardsActionTypes.GET_REWARDS | RewardsActionTypes.REQUEST_APPROVED | RewardsActionTypes.REQUEST_REJECTED
+	type: RewardsActionTypes.API_RESPONSE_SUCCESS | RewardsActionTypes.API_RESPONSE_ERROR | RewardsActionTypes.GET_REWARDS | RewardsActionTypes.REQUEST_APPROVED | RewardsActionTypes.REQUEST_REJECTED | RewardsActionTypes.GET_REWARDS_TIMELINE
 	payload: {} | string
 }
 
@@ -20,6 +20,11 @@ export const rewardsApiResponseError = (actionType: string, error: string): Rewa
 export const getRewards = (data: any, params: any) => ({
 	type: RewardsActionTypes.GET_REWARDS,
 	payload: { data, params },
+})
+
+export const getRewardsTimeline = (data: any) => ({
+	type: RewardsActionTypes.GET_REWARDS_TIMELINE,
+	payload: { data },
 })
 
 export const requestApprovedAction = (id: string) => ({

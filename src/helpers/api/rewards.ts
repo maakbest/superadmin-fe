@@ -9,6 +9,11 @@ function getrewards(params: any) {
 	return api.get(`${baseUrl}`, { ...params })
 }
 
+function getrewardstimeline(id: any) {
+	const baseUrl = `/dashboard/withdrawal/${id}/booking-details`
+	return api.get(`${baseUrl}`)
+}
+
 function approveRequest(id: string) {
 	const baseUrl = `/dashboard/withdrawal/${id}/approve`
 	return api.create(`${baseUrl}`, {})
@@ -19,4 +24,4 @@ function rejectRequest(id: string) {
 	return api.create(`${baseUrl}`, {})
 }
 
-export { getrewards, approveRequest, rejectRequest }
+export { getrewards, approveRequest, rejectRequest, getrewardstimeline }
