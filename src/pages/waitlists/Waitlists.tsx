@@ -44,7 +44,7 @@ const Waitlists = () => {
 	// Table data
 	const tableData =
 		waitlistDatas?.map((waitlist: any) => {
-			return [waitlist.first_name + ' ' + waitlist.last_name, waitlist.email, waitlist.country || '-', waitlist.days]
+			return [waitlist.first_name + ' ' + waitlist.last_name, waitlist.email, waitlist.country?.name || '-', waitlist.days]
 		}) || []
 
 	// 🔹 Pagination Logic
