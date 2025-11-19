@@ -233,7 +233,7 @@ const Rewards = () => {
 										<th className="px-4 py-2 border-b">Spends</th>
 										<th className="px-4 py-2 border-b">Coins</th>
 										<th className="px-4 py-2 border-b">Status</th>
-										<th className="px-4 py-2 border-b">Actipns</th>
+										<th className="px-4 py-2 border-b">Actions</th>
 									</tr>
 								</thead>
 								<tbody>

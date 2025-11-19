@@ -744,5 +744,12 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		icon: 'ri-gift-line',
 		url: '/payout-requests',
 	},
+	{
+		key: 'apps-calendar',
+		label: 'Waitlists',
+		isTitle: false,
+		icon: 'ri-flag-2-line',
+		url: '/waitlists',
+	},
 ]
 export { MENU_ITEMS }

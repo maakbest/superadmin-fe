@@ -3,6 +3,7 @@ import { Navigate, Route, RouteProps } from 'react-router-dom'
 
 // components
 import PrivateRoute from './PrivateRoute'
+import Waitlists from '@/pages/waitlists/Waitlists'
 
 // lazy load all the views
 
@@ -860,7 +861,17 @@ const dashboardSA: RoutesProps = {
 	icon: 'home',
 	header: 'Apps',
 }
-const adminRouters = [userRouter, rewardsRouter, dashboardSA]
+
+const waitlists: RoutesProps = {
+	path: '/waitlists',
+	name: 'Waitlists',
+	element: <Waitlists />,
+	route: PrivateRoute,
+	roles: ['Admin'],
+	icon: 'ri-flag-2-line',
+	header: 'Apps',
+}
+const adminRouters = [userRouter, rewardsRouter, dashboardSA, waitlists]
 
 // flatten the list of all nested routes
 const flattenRoutes = (routes: RoutesProps[]) => {
