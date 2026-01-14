@@ -39,12 +39,13 @@ const AllRoutes = (props: RouteProps) => {
 						path={route.path}
 						element={
 							api.isUserAuthenticated() === false ? (
-								<Navigate
-									to={{
-										pathname: '/auth/login',
-										search: 'next=' + route.path,
-									}}
-								/>
+								// <Navigate
+								// 	to={{
+								// 		pathname: '/auth/login',
+								// 		search: 'next=' + route.path,
+								// 	}}
+								// />
+								<Navigate to="/auth/login" replace />
 							) : (
 								<VerticalLayout {...props}>{route.element}</VerticalLayout>
 							)
