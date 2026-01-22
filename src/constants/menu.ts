@@ -751,5 +751,12 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		icon: 'ri-flag-2-line',
 		url: '/waitlists',
 	},
+	{
+		key: 'apps-calendar',
+		label: 'Order Details',
+		isTitle: false,
+		icon: 'ri-flag-2-line',
+		url: '/order-details',
+	},
 ]
 export { MENU_ITEMS }
