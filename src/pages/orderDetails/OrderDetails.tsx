@@ -18,8 +18,8 @@ const OrderDetails = () => {
 					<tr className={`text-left ${colors.text.muted}`}>
 						<th className="px-4 py-3 font-semibold">Category</th>
 						<th className="px-4 py-3 font-semibold">Field</th>
-						<th className="px-4 py-3 font-semibold">Best Data</th>
 						<th className="px-4 py-3 font-semibold">AMA Data</th>
+						<th className="px-4 py-3 font-semibold">Best Data</th>
 					</tr>
 				</thead>
 
@@ -34,10 +34,10 @@ const OrderDetails = () => {
 					{[
 						['Room Price', 'Hotel Currency', 'USD', 'USD'],
 						['', 'User Currency', 'INR', 'INR'],
-						['', 'Room Price', '120', '115'],
-						['', 'Tax', '20', '18'],
+						['', 'Room Price', '115', '120'],
+						['', 'Tax', '18', '20'],
 						['', 'Payable at Hotel', 'Yes', 'Yes'],
-						['', 'Offer ID', 'AMA123', 'NA'],
+						['', 'Offer ID', 'NA', 'AMA123'],
 					].map(([category, field, best, ama], i) => (
 						<tr key={i} className={colors.table.rowHoverBg}>
 							<td className={`px-4 py-2 ${colors.text.secondary}`}>{category}</td>
@@ -75,8 +75,8 @@ const OrderDetails = () => {
 
 					{[
 						['PNR', 'PNR', 'ABC123', '-'],
-						['Best', 'Reservation ID', '-', 'BEST789'],
-						['Payment', 'Stripe Payment ID', '-', 'pi_12345'],
+						['Best', 'Reservation ID', 'BEST789', '-'],
+						['Payment', 'Stripe Payment ID', 'pi_12345', '-'],
 					].map(([category, field, best, ama], i) => (
 						<tr key={i} className={colors.table.rowHoverBg}>
 							<td className={`px-4 py-2 ${colors.text.secondary}`}>{category}</td>
@@ -94,8 +94,8 @@ const OrderDetails = () => {
 					</tr>
 
 					{[
-						['Coins', 'Coins Awarded', '-', '200'],
-						['', 'Cashback Awarded', '-', '₹300'],
+						['Coins', 'Coins Awarded', '200', '-'],
+						['', 'Cashback Awarded', '₹300', '-'],
 					].map(([category, field, best, ama], i) => (
 						<tr key={i} className={colors.table.rowHoverBg}>
 							<td className={`px-4 py-2 ${colors.text.secondary}`}>{category}</td>
