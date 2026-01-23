@@ -4,3 +4,4 @@ export { login, logout, signup, forgotPassword }
 
 export * from './dashboard'
 export * from './waitlist'
+export * from './bookingDetails'
