@@ -874,8 +874,8 @@ const waitlists: RoutesProps = {
 }
 
 const orderDetails: RoutesProps = {
-	path: '/order-details',
-	name: 'Order Details',
+	path: '/bookings',
+	name: 'Bookings',
 	element: <OrderDetails />,
 	route: PrivateRoute,
 	roles: ['Admin'],
