@@ -6,7 +6,7 @@ import rewardsSaga from './rewards/saga'
 import countriesSaga from './countries/saga'
 import dashboardSaga from './dashboard/saga'
 import waitlistsSaga from './waitlist/saga'
-
+import bookingDetailsSaga from './bookingdetails/saga'
 export default function* rootSaga() {
-	yield all([authSaga(), usersSaga(), rewardsSaga(), countriesSaga(), dashboardSaga(), waitlistsSaga()])
+	yield all([authSaga(), usersSaga(), rewardsSaga(), countriesSaga(), dashboardSaga(), waitlistsSaga(), bookingDetailsSaga()])
 }

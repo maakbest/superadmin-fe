@@ -9,6 +9,7 @@ import Rewards from './rewards/reducers'
 import Countries from './countries/reducers'
 import Dashboard from './dashboard/reducers'
 import Waitlist from './waitlist/reducers'
+import BookingDetails from './bookingdetails/reducers'
 // saga
 import rootSaga from './sagas'
 
@@ -26,6 +27,7 @@ export const store = configureStore({
 		Countries: Countries,
 		Dashboard: Dashboard,
 		Waitlist: Waitlist,
+		BookingDetails: BookingDetails,
 	} as any,
 
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
