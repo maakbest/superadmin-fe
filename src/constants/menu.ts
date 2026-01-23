@@ -753,10 +753,10 @@ const MENU_ITEMS: MenuItemTypes[] = [
 	},
 	{
 		key: 'apps-calendar',
-		label: 'Order Details',
+		label: 'Bookings',
 		isTitle: false,
 		icon: 'ri-flag-2-line',
-		url: '/order-details',
+		url: '/bookings',
 	},
 ]
 export { MENU_ITEMS }
