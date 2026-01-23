@@ -20,7 +20,7 @@ const DataTables = () => {
 					<div className="p-6">
 						<p className="text-sm text-slate-700 dark:text-slate-400 mb-4">The most basic list group is an unordered list with list items and the proper classes. Build upon it with the options that follow, or with your own CSS as needed.</p>
 
-						<Grid data={dataTableRecords} pagination={{ enabled: true, limit: 5 }} search={true} sort={true} />
+						<Grid data={dataTableRecords} pagination={true} search={true} sort={true} />
 					</div>
 				</div>
 
@@ -35,7 +35,7 @@ const DataTables = () => {
 							Pagination can be enabled by setting <code>pagination: true</code>:
 						</p>
 
-						<Grid data={dataTableRecords} pagination={{ enabled: true, limit: 5 }} />
+						<Grid data={dataTableRecords} pagination={true} />
 					</div>
 				</div>
 
@@ -50,7 +50,7 @@ const DataTables = () => {
 							Grid.js supports global search on all rows and columns. Set <code>search: true</code> to enable the search plugin:
 						</p>
 
-						<Grid data={dataTableRecords} pagination={{ enabled: true, limit: 5 }} search={true} />
+						<Grid data={dataTableRecords} pagination={true} search={true} />
 					</div>
 				</div>
 
@@ -65,7 +65,7 @@ const DataTables = () => {
 							To enable sorting, simply add <code>sort: true</code> to your config:
 						</p>
 
-						<Grid data={dataTableRecords} pagination={{ enabled: true, limit: 5 }} sort={true} />
+						<Grid data={dataTableRecords} pagination={true} sort={true} />
 					</div>
 				</div>
 
@@ -107,7 +107,7 @@ const DataTables = () => {
 					<div className="p-6">
 						<p className="text-sm text-slate-700 dark:text-slate-400 mb-4">The most basic list group is an unordered list with list items and the proper classes. Build upon it with the options that follow, or with your own CSS as needed.</p>
 
-						<Grid data={dataTableRecords} columns={['id', 'name', 'email', 'position', 'company', 'country']} height="300px" fixedHeader={true} pagination={{ enabled: true, limit: 10 }} />
+						<Grid data={dataTableRecords} columns={['id', 'name', 'email', 'position', 'company', 'country']} height="300px" fixedHeader={true} pagination={true} />
 					</div>
 				</div>
 
@@ -136,7 +136,7 @@ const DataTables = () => {
 								'country',
 							]}
 							sort={true}
-							pagination={{ enabled: true, limit: 5 }}
+							pagination={true}
 						/>
 					</div>
 				</div>
