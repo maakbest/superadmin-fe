@@ -33,6 +33,23 @@ type ComparisonProps = {
 /* Row Component */
 /* ------------------------------------------------------------------ */
 
+type YesNoCellProps = {
+	value: boolean | 'yes' | 'no'
+}
+
+export const YesNoCell = ({ value }: YesNoCellProps) => {
+	const isYes = value === true || value === 'yes'
+
+	return (
+		<span
+			className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold
+        ${isYes ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}
+		>
+			{isYes ? 'Yes' : 'No'}
+		</span>
+	)
+}
+
 const ComparisonRow = ({ label, amadeusValue, bestValue }: { label: string; amadeusValue: React.ReactNode; bestValue: React.ReactNode }) => {
 	const isDifferent = formatValue(amadeusValue) !== formatValue(bestValue)
 
@@ -75,12 +92,25 @@ const BookingPriceComparison: React.FC<ComparisonProps> = ({ amadeus, best }) =>
 
 				<ComparisonRow
 					label="Payable at Hotel"
-					amadeusValue={formatValue(amadeus?.room_price?.payable_at_hotel)}
+					amadeusValue={
+						bestPayAtHotel.length ? (
+							<div className="space-y-1">
+								{bestPayAtHotel.map((item: any, index: number) => (
+									<div key={index} className="flex gap-2 text-xs">
+										<span className="text-gray-600">{item.label}</span>
+										<span className="font-medium">{formatCurrency(item.amount, best?.room_price?.user_currency)}</span>
+									</div>
+								))}
+							</div>
+						) : (
+							'—'
+						)
+					}
 					bestValue={
 						bestPayAtHotel.length ? (
 							<div className="space-y-1">
 								{bestPayAtHotel.map((item: any, index: number) => (
-									<div key={index} className="flex justify-between text-xs">
+									<div key={index} className="flex gap-2 text-xs">
 										<span className="text-gray-600">{item.label}</span>
 										<span className="font-medium">{formatCurrency(item.amount, best?.room_price?.user_currency)}</span>
 									</div>
@@ -92,13 +122,15 @@ const BookingPriceComparison: React.FC<ComparisonProps> = ({ amadeus, best }) =>
 					}
 				/>
 
-				<ComparisonRow label="Refundable" amadeusValue={formatValue(amadeus?.refunds?.is_refundable)} bestValue={formatValue(best?.refunds?.is_refundable)} />
+				<ComparisonRow label="Refundable" amadeusValue={<YesNoCell value={amadeus?.refunds?.is_refundable} />} bestValue={<YesNoCell value={best?.refunds?.is_refundable} />} />
 
 				<ComparisonRow label="Refund Penalty" amadeusValue={formatValue(amadeus?.refunds?.refund_penalty)} bestValue={formatValue(best?.refunds?.refund_penalty)} />
 
 				<ComparisonRow label="Coins Awarded" amadeusValue="—" bestValue={<span className="font-semibold">{best?.coins?.coins_awarded ?? '—'}</span>} />
 
-				<ComparisonRow label="Cashback" amadeusValue="—" bestValue={<span className="font-semibold">{best?.coins?.cashback_awarded ?? '—'}</span>} />
+				<ComparisonRow label="Cashback" amadeusValue="—" bestValue={<span className="font-semibold">{best?.coins?.cashback_awarded ? (best.coins.cashback_awarded * 0.01).toFixed(2) : '—'}</span>} />
+
+				<ComparisonRow label="Coins Redeemed" amadeusValue="—" bestValue={<span className="font-semibold">{best?.coins?.coins_redemeed ?? '—'}</span>} />
 
 				<ComparisonRow label="Payment Reference" amadeusValue={amadeus?.room_price?.offer_id} bestValue={best?.stripe_payment_id} />
 			</div>
