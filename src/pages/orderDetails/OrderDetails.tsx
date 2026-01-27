@@ -123,7 +123,7 @@ const OrderDetails = () => {
 								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency(order?.room?.price?.total || 0, order?.room?.pricing?.free?.currency)}</div>
 
 								<div className="mt-0.5 text-xs text-gray-500">BEST</div>
-								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency(order?.room?.pricing?.paid || 0, order?.room?.pricing?.free?.currency)}</div>
+								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency((order?.room?.pricing?.free?.display_price || 0) + (order?.room?.pricing?.tax || 0), order?.room?.pricing?.free?.currency)}</div>
 							</div>
 						</div>
 					)
