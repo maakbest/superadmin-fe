@@ -74,13 +74,12 @@ const OrderDetails = () => {
 			)}
 			{error && <DismissibleAlert isVisible={error} variant="danger" message={error} onclose={() => dispatch(bookingDetailsApiResponseError(BookingDetailsActionTypes.API_RESPONSE_ERROR, ''))} />}
 			{/* Header */}
-			<div className="grid grid-cols-6 border-b bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600">
+			<div className="grid grid-cols-5 border-b bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600">
 				<div className="px-4 py-3">PNR No</div>
 				<div className="px-4 py-3">User Details</div>
 				<div className="px-4 py-3">Hotel Details</div>
 				<div className="px-4 py-3">Booking Details</div>
-				<div className="px-4 py-3">Cancellation & Refund</div>
-				<div className="px-4 py-3">Room Details</div>
+				<div className="px-4 py-3">Pricing Details</div>
 			</div>
 
 			{/* Rows */}
@@ -91,7 +90,7 @@ const OrderDetails = () => {
 					const order = row?.order
 
 					return (
-						<div key={index} className="grid grid-cols-6 items-start transition-colors hover:bg-gray-50 cursor-pointer" onClick={() => onClickRow(row?.uuid)}>
+						<div key={index} className="grid grid-cols-5 items-start transition-colors hover:bg-gray-50 cursor-pointer" onClick={() => onClickRow(row?.uuid)}>
 							{/* PNR */}
 							<div className="px-4 py-3">
 								<div className="font-semibold text-gray-900 tracking-wide">{order?.pnr || '—'}</div>
@@ -118,31 +117,13 @@ const OrderDetails = () => {
 								</div>
 							</div>
 
-							{/* Cancellation & Refund */}
-							<div className="px-4 py-3 space-y-1">
-								{order?.cancellation ? (
-									<>
-										<span className="inline-flex rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">Cancelled</span>
-
-										<span className="inline-flex rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-600">Refundable</span>
-
-										<div className="text-xs text-gray-600">
-											{order?.cancellation?.refund_destination?.type?.toUpperCase()} ••••{order?.cancellation?.refund_destination?.last4}
-										</div>
-
-										<div className="font-semibold text-gray-900">{formatCurrency(order?.cancellation?.refunded_amount?.amount, order?.cancellation?.refunded_amount?.currency)}</div>
-
-										<div className="text-xs text-gray-500">Coins refunded: {order?.cancellation?.refunded_coins}</div>
-									</>
-								) : (
-									<div className="text-gray-400">—</div>
-								)}
-							</div>
-
 							{/* Room Basic Details */}
 							<div className="px-4 py-3">
-								<div className="font-medium text-gray-900">{order?.room?.room?.type || '—'}</div>
-								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency((order?.room?.pricing?.paid || 0) + (order?.room?.pricing?.tax || 0), order?.room?.pricing?.free?.currency)}</div>
+								<div className="mt-0.5 text-xs text-gray-500">AMA</div>
+								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency(order?.room?.price?.total || 0, order?.room?.pricing?.free?.currency)}</div>
+
+								<div className="mt-0.5 text-xs text-gray-500">BEST</div>
+								<div className="mt-0.5 font-semibold text-gray-900">{formatCurrency((order?.room?.pricing?.free?.display_price || 0) + (order?.room?.pricing?.tax || 0), order?.room?.pricing?.free?.currency)}</div>
 							</div>
 						</div>
 					)
